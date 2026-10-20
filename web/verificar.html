@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Verificar boleto · Carrera Atlética 7K</title>
+  <meta name="description" content="Verificación de boletos de inscripción – Carrera Atlética 7K." />
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#290055" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/form.css" />
+  <link rel="stylesheet" href="css/boletos.css" />
+  <script type="module" src="dist/verificar.js"></script>
+</head>
+<body class="form-page boletos-page">
+  <a class="skip-link" href="#contenido">Saltar al lector</a>
+
+  <header class="site-header site-header--compacto">
+    <div class="container">
+      <p class="back"><a href="index.html">← Volver a la información de la carrera</a></p>
+      <div class="site-header__inner">
+        <img class="site-header__logo" src="assets/marca/logo-7k-unete.svg" alt="" width="215" height="160" />
+        <div class="site-header__texto">
+          <p class="eyebrow">Carrera Atlética 7K</p>
+          <h1>Verificar boleto</h1>
+          <p class="tagline">Escanea el código QR del boleto de inscripción</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido" class="container">
+    <!-- Barra del moderador (solo con sesión iniciada) -->
+    <section class="card moderador" data-moderador hidden aria-labelledby="moderador-titulo">
+      <div class="moderador__cabecera">
+        <p id="moderador-titulo" class="moderador__nombre">Moderador: <strong data-moderador-nombre></strong></p>
+        <button type="button" class="btn btn--ghost btn--sm" data-cerrar-sesion>Cerrar sesión</button>
+      </div>
+      <fieldset class="moderador__puntos">
+        <legend>Punto de control</legend>
+        <div class="puntos" data-puntos></div>
+        <p class="hint">Todo lo que confirmes se registrará en el punto seleccionado.</p>
+      </fieldset>
+      <p class="moderador__resumen" aria-live="polite" data-resumen></p>
+    </section>
+
+    <!-- Resultado de la lectura (arriba del lector: en el celular se ve sin desplazarse) -->
+    <section class="card resultado" data-resultado data-tipo="valido" hidden tabindex="-1" aria-live="assertive" aria-labelledby="resultado-titulo">
+      <p class="resultado__punto" data-resultado-punto hidden>Punto de control: <strong data-resultado-punto-nombre></strong></p>
+      <div class="resultado__icono" aria-hidden="true"></div>
+      <h2 id="resultado-titulo" data-resultado-titulo></h2>
+      <p class="resultado__detalle" data-resultado-detalle></p>
+      <dl class="resultado__datos" data-resultado-datos hidden></dl>
+      <div class="resultado__registro" data-resultado-registro hidden>
+        <h3 class="resultado__subtitulo">Registro en cada punto de control</h3>
+        <ul class="resultado__ingresos" data-resultado-ingresos></ul>
+      </div>
+      <div class="boleto resultado__boleto" data-resultado-boleto hidden>
+        <svg class="boleto__qr" data-boleto-qr role="img" xmlns="http://www.w3.org/2000/svg"></svg>
+        <p class="boleto__nombre" data-boleto-nombre></p>
+        <p class="boleto__codigo" data-boleto-codigo></p>
+        <p class="boleto__indicacion">Presenta este boleto y tu cédula de identidad.</p>
+        <button type="button" class="btn btn--cta btn--sm" data-boleto-descargar><span class="btn__label">Descargar boleto (imagen)</span></button>
+      </div>
+      <p class="form-alert" role="alert" data-resultado-error hidden></p>
+      <div class="actions actions--centro">
+        <button type="button" class="btn btn--cta" data-confirmar hidden>
+          <span class="btn__label" data-confirmar-texto>Confirmar</span>
+          <span class="btn__spinner" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="btn btn--ghost btn--sm" data-deshacer hidden>
+          <span class="btn__label">Deshacer este registro</span>
+          <span class="btn__spinner" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="btn btn--ghost btn--sm resultado__siguiente" data-siguiente>
+          <svg class="resultado__siguiente-icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          <span data-siguiente-texto>Escanear otro boleto</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Lector -->
+    <section class="card lector" data-lector aria-labelledby="lector-titulo">
+      <h2 id="lector-titulo" class="visually-hidden">Lector de códigos QR</h2>
+      <div class="lector__visor" data-visor>
+        <video class="lector__video" data-video playsinline muted aria-hidden="true"></video>
+        <span class="lector__marco" aria-hidden="true"></span>
+        <p class="lector__aviso" data-visor-aviso>La cámara está apagada.</p>
+      </div>
+      <div class="actions actions--centro">
+        <button type="button" class="btn btn--cta" data-camara>
+          <span class="btn__label">Activar cámara</span>
+        </button>
+      </div>
+      <p class="form-alert" role="alert" data-camara-error hidden></p>
+
+      <form class="busqueda" data-busqueda hidden novalidate>
+        <div class="field">
+          <label for="busqueda">¿El QR no se lee? Busca por código o cédula</label>
+          <div class="busqueda__fila">
+            <input id="busqueda" name="busqueda" type="text" autocomplete="off" maxlength="40" placeholder="7K-0001 o cédula" />
+            <button type="submit" class="btn btn--primary">Buscar</button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Participantes: por privacidad se pide cédula + fecha de nacimiento (no basta la cédula) -->
+      <form class="busqueda" data-busqueda-publica novalidate>
+        <p class="busqueda__titulo">¿El QR no se lee? Busca tu inscripción</p>
+        <div class="grid">
+          <div class="field">
+            <label for="pub-documento">Cédula / pasaporte</label>
+            <input id="pub-documento" name="documento" type="text" autocomplete="off" maxlength="20" required />
+          </div>
+          <div class="field">
+            <label for="pub-fecha">Fecha de nacimiento</label>
+            <input id="pub-fecha" name="fechaNacimiento" type="date" autocomplete="bday" required />
+          </div>
+        </div>
+        <p class="hint">Por tu privacidad pedimos también tu fecha de nacimiento: así nadie puede consultar inscripciones ajenas.</p>
+        <p class="form-alert" role="alert" data-busqueda-publica-error hidden></p>
+        <div class="actions actions--centro busqueda__acciones">
+          <button type="submit" class="btn btn--primary" data-busqueda-publica-enviar>
+            <span class="btn__label">Buscar mi inscripción</span>
+            <span class="btn__spinner" aria-hidden="true"></span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Acceso de moderadores -->
+    <details class="card acceso" data-acceso>
+      <summary>Acceso de moderadores</summary>
+      <p class="hint">La consulta pública solo indica si un boleto es válido. Para ver los datos del participante y registrar su ingreso, inicia sesión.</p>
+      <form data-login novalidate>
+        <div class="field">
+          <label for="usuario">Usuario</label>
+          <input id="usuario" name="usuario" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="64" required />
+        </div>
+        <div class="field">
+          <label for="clave">Contraseña</label>
+          <input id="clave" name="clave" type="password" autocomplete="current-password" maxlength="256" required />
+        </div>
+        <p class="form-alert" role="alert" data-login-error hidden></p>
+        <div class="actions">
+          <button type="submit" class="btn btn--primary" data-login-enviar>
+            <span class="btn__label">Iniciar sesión</span>
+            <span class="btn__spinner" aria-hidden="true"></span>
+          </button>
+        </div>
+      </form>
+    </details>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Ministerio de Gobierno · Subsecretaría de Prevención y Erradicación de la Violencia · D.M. de Quito, octubre de 2026.</p>
+    </div>
+  </footer>
+</body>
+</html>

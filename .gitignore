@@ -1,0 +1,23 @@
+# Dependencias y compilación (se generan con npm install / npm run build)
+node_modules/
+build/
+web/dist/
+
+# Datos: base de datos (datos personales y clave de firma de boletos), respaldos, exportaciones y QR
+data/
+*.db
+*.db-shm
+*.db-wal
+*.pem
+
+# Configuración local y secretos
+.env
+.env.*
+!.env.example
+
+# Herramientas y sistema
+.claude/
+.vscode/
+.idea/
+.DS_Store
+*.log

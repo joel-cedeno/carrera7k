@@ -1,0 +1,859 @@
+/* ==========================================================================
+   base.css · común a la landing y al formulario
+   Reset, tipografía, utilidades, botones, widget de cupos, sistema de
+   aparición al hacer scroll ([data-reveal]) y pie de página.
+   Solo consume variables de tokens.css. Mobile-first. Tema oscuro único.
+   ========================================================================== */
+
+/* ---------- 1. Reset y base ---------------------------------------------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--color-bg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-sans);
+  font-size: var(--fs-md);
+  line-height: var(--lh);
+  color: var(--color-text);
+  background: var(--color-bg);
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+
+main { flex: 1 0 auto; }
+
+h1, h2, h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  line-height: var(--lh-tight);
+  text-wrap: balance;
+}
+
+p { margin: 0; }
+
+a { color: var(--color-primary); text-underline-offset: 0.2em; }
+
+img, svg { max-width: 100%; height: auto; }
+
+::selection { background: var(--color-selection-bg); color: var(--color-selection-text); }
+
+/* Foco global: anillo amarillo grueso y separado, visible sobre el morado */
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.container {
+  width: 100%;
+  max-width: 50rem;
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+@media (min-width: 40rem) {
+  .container { padding-inline: var(--space-5); }
+}
+
+/* ---------- 2. Utilidades ------------------------------------------------ */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-2);
+  top: var(--space-2);
+  z-index: 100;
+  padding: 0.625rem 1rem;
+  font-weight: 700;
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(calc(-100% - 1rem));
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.skip-link:focus { transform: none; }
+
+.small {
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--color-text-subtle);
+}
+
+/* Antetítulo y lema */
+.eyebrow {
+  display: block;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.tagline {
+  margin-top: var(--space-2);
+  max-width: 34ch;
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* ---------- 3. Botones --------------------------------------------------- */
+/* Cada variante define sus colores con variables locales (--btn-*). */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 3rem;
+  padding: 0.75rem 1.5rem;
+  font: inherit;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  color: var(--btn-fg, var(--color-text));
+  background: var(--btn-bg, transparent);
+  border: 2px solid var(--btn-border, transparent);
+  border-radius: var(--radius);
+  box-shadow: var(--btn-shadow, none);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition:
+    background-color var(--dur) var(--ease-standard),
+    border-color var(--dur) var(--ease-standard),
+    color var(--dur) var(--ease-standard),
+    box-shadow var(--dur) var(--ease-standard),
+    transform var(--dur) var(--ease-out),
+    filter var(--dur) var(--ease-standard);
+}
+
+.btn:hover {
+  background: var(--btn-bg-hover, var(--btn-bg, transparent));
+  border-color: var(--btn-border-hover, var(--btn-border, transparent));
+  box-shadow: var(--btn-shadow-hover, var(--btn-shadow, none));
+  transform: translateY(calc(var(--lift) * -1));
+}
+
+.btn:active {
+  background: var(--btn-bg-active, var(--btn-bg-hover, var(--btn-bg, transparent)));
+  box-shadow: none;
+  transform: translateY(1px);
+  transition-duration: var(--dur-fast);
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--color-focus-halo);
+}
+
+/* Primario: amarillo de marca con texto morado */
+.btn--primary {
+  --btn-fg: var(--color-on-primary);
+  --btn-bg: var(--color-primary);
+  --btn-bg-hover: var(--color-primary-hover);
+  --btn-bg-active: var(--color-primary);
+  --btn-shadow: var(--shadow-btn);
+  --btn-shadow-hover: var(--shadow-btn-hover);
+}
+
+/* Fantasma: contorno claro sobre el morado */
+.btn--ghost {
+  --btn-fg: var(--color-text);
+  --btn-bg: transparent;
+  --btn-bg-hover: color-mix(in srgb, var(--color-text) 10%, transparent);
+  --btn-bg-active: color-mix(in srgb, var(--color-text) 16%, transparent);
+  --btn-border: color-mix(in srgb, var(--color-text) 55%, transparent);
+  --btn-border-hover: var(--color-text);
+}
+
+/* «Inscríbete Aquí» del arte: degradado vertical #8921d0 → #5c22ad, texto
+   amarillo en Metropolis Bold y radio ≈ 31 % del alto. Brillo que lo
+   recorre, latido suave y elevación al pasar el puntero.
+   Con texto pequeño (16 px) el degradado es algo más oscuro arriba para
+   mantener 4.5:1; los botones grandes (.btn--hero, .btn--lg: texto ≥ 18 px
+   en negrita) usan el degradado exacto del arte (≥ 3:1). */
+.btn--cta {
+  --btn-fg: var(--color-on-cta);
+  --btn-bg: var(--cta-gradient-sm);
+  --btn-bg-hover: var(--cta-gradient-sm);
+  --btn-bg-active: var(--cta-gradient-sm);
+  --btn-shadow: var(--shadow-btn);
+  --btn-shadow-hover: var(--shadow-btn-hover);
+  overflow: hidden;
+  isolation: isolate;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  letter-spacing: 0;
+  border: 0;
+  border-radius: 0.58em;
+}
+
+.btn--cta:hover { filter: brightness(1.08); }
+
+.btn--cta .btn__label { position: relative; z-index: 1; }
+
+/* Brillo que recorre el botón (pseudoelemento sobre el fondo, bajo el texto) */
+.btn--cta::before {
+  content: "";
+  position: absolute;
+  inset: -20% auto -20% 0;
+  width: 42%;
+  background: linear-gradient(105deg, transparent 0%, var(--cta-shine) 50%, transparent 100%);
+  transform: translateX(-160%) skewX(-18deg);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn--cta:not(.is-disabled):not(:disabled)::before {
+    animation: cta-shine var(--dur-shine) var(--ease-in-out) 1.6s infinite;
+  }
+
+  .btn--cta.btn--pulse:not(.is-disabled):not(:disabled) {
+    animation: cta-pulse 2.8s var(--ease-in-out) 2s infinite;
+  }
+
+  .btn--cta.btn--pulse:hover,
+  .btn--cta.btn--pulse:focus-visible { animation: none; }
+}
+
+@keyframes cta-shine {
+  0%        { transform: translateX(-160%) skewX(-18deg); }
+  38%, 100% { transform: translateX(340%) skewX(-18deg); }
+}
+
+@keyframes cta-pulse {
+  0%   { box-shadow: var(--shadow-btn), var(--shadow-cta-glow); }
+  55%  { box-shadow: var(--shadow-btn), var(--shadow-cta-glow-2); }
+  100% { box-shadow: var(--shadow-btn), var(--shadow-cta-glow-2); }
+}
+
+.btn--sm {
+  min-height: 2.5rem;
+  padding: 0.5rem 1rem;
+  font-size: var(--fs-sm);
+  border-radius: var(--radius-sm);
+}
+
+.btn--cta.btn--sm { font-size: var(--fs-md); }
+
+.btn--lg {
+  min-height: 3.5rem;
+  padding: 0.875rem 1.875rem;
+  font-size: var(--fs-lg);
+}
+
+.btn--cta:is(.btn--lg, .btn--hero) {
+  --btn-bg: var(--cta-gradient);
+  --btn-bg-hover: var(--cta-gradient);
+  --btn-bg-active: var(--cta-gradient);
+}
+
+/* Deshabilitado: <button disabled> o enlaces [data-cta] que el JS marca
+   con .is-disabled + aria-disabled="true". Sin elevación ni brillo. */
+.btn.btn:is(:disabled, .is-disabled, [aria-disabled="true"]) {
+  --btn-fg: var(--color-on-disabled);
+  --btn-bg: var(--color-disabled-bg);
+  --btn-bg-hover: var(--color-disabled-bg);
+  --btn-bg-active: var(--color-disabled-bg);
+  --btn-border: transparent;
+  --btn-border-hover: transparent;
+  --btn-shadow: none;
+  --btn-shadow-hover: none;
+  cursor: not-allowed;
+  filter: none;
+  transform: none;
+  animation: none;
+}
+
+.btn--ghost.btn:is(:disabled, .is-disabled, [aria-disabled="true"]) {
+  --btn-bg: transparent;
+  --btn-bg-hover: transparent;
+  --btn-bg-active: transparent;
+  --btn-border: var(--color-disabled-bg);
+  --btn-border-hover: var(--color-disabled-bg);
+}
+
+/* Cargando: spinner visible y etiqueta atenuada */
+.btn__spinner {
+  display: none;
+  flex: none;
+  width: 1.125em;
+  height: 1.125em;
+  border: 2.5px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+}
+
+.btn.is-loading { cursor: progress; transform: none; }
+.btn.is-loading .btn__spinner { display: inline-block; animation: btn-spin 0.75s linear infinite; }
+.btn.is-loading .btn__label { opacity: 0.6; }
+
+@keyframes btn-spin { to { transform: rotate(1turn); } }
+
+/* ---------- 4. Widget de cupos en tiempo real ---------------------------- */
+/* data-estado: cargando | abiertas | proximamente | cerradas | agotadas |
+   desconectado. --progress (0–1) = proporción de cupos ocupados. */
+.cupos {
+  --progress: 0;
+  --cupos-strong: var(--color-text);
+  --cupos-muted: var(--color-text-muted);
+  --cupos-track: var(--color-track);
+  --cupos-fill: linear-gradient(90deg, var(--k-1), var(--k-2), var(--color-primary));
+  --cupos-live: var(--color-live);
+  --cupos-dot-off: var(--color-live-off);
+  --cupos-warning: var(--color-warning);
+  --cupos-highlight: var(--color-primary);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.cupos__estado {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--cupos-muted);
+}
+
+.cupos__cifra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--space-2);
+  row-gap: var(--space-1);
+}
+
+.cupos__numero {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.6rem + 1.8vw, 2.75rem);
+  font-weight: var(--fw-display);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--cupos-strong);
+  transform-origin: left 60%;
+  transition: color var(--dur-slow) var(--ease-standard), opacity var(--dur-slow) var(--ease-standard);
+}
+
+.cupos__de {
+  font-size: var(--fs-sm);
+  color: var(--cupos-muted);
+}
+
+.cupos__barra {
+  position: relative;
+  overflow: hidden;
+  height: 0.5rem;
+  margin-top: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--cupos-track);
+}
+
+.cupos__relleno {
+  display: block;
+  height: 100%;
+  background: var(--cupos-fill);
+  transform: scaleX(clamp(0, var(--progress), 1));
+  transform-origin: left center;
+  transition: transform var(--dur-progress) var(--ease-out);
+}
+
+.cupos__plazo {
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+  color: var(--cupos-muted);
+}
+
+/* Punto "en vivo": late solo con inscripciones abiertas */
+.live-dot {
+  position: relative;
+  flex: none;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background: var(--cupos-dot-off);
+  transition: background-color var(--dur-slow) var(--ease-standard);
+}
+
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  opacity: 0;
+}
+
+.cupos[data-estado="abiertas"] .live-dot { background: var(--cupos-live); }
+.cupos[data-estado="abiertas"] .live-dot::after { animation: live-ring 2.2s var(--ease-out) infinite; }
+
+@keyframes live-ring {
+  0%       { transform: scale(1); opacity: 0.6; }
+  70%, 100% { transform: scale(3.2); opacity: 0; }
+}
+
+/* Estados */
+.cupos[data-estado="cargando"] .cupos__numero { opacity: 0.5; }
+
+.cupos[data-estado="cargando"] .cupos__barra::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--cupos-strong) 22%, transparent) 50%,
+    transparent 100%);
+  transform: translateX(-100%);
+  animation: cupos-shimmer 1.4s var(--ease-in-out) infinite;
+}
+
+@keyframes cupos-shimmer { to { transform: translateX(100%); } }
+
+.cupos[data-estado="desconectado"] .cupos__cifra,
+.cupos[data-estado="desconectado"] .cupos__barra { opacity: 0.55; }
+
+.cupos:is([data-estado="cerradas"], [data-estado="agotadas"]) .cupos__numero { color: var(--cupos-muted); }
+
+.cupos.is-bajo { --cupos-fill: var(--cupos-warning); }
+.cupos.is-bajo .cupos__numero { color: var(--cupos-warning); }
+
+.cupos.is-bump .cupos__numero { animation: cupos-bump 900ms var(--ease-out); }
+
+@keyframes cupos-bump {
+  0%   { transform: scale(1); }
+  22%  { transform: scale(1.14); color: var(--cupos-highlight); }
+  100% { transform: scale(1); }
+}
+
+/* Variante compacta del hero: una sola línea bajo el botón del arte.
+   El número va en Poppins, pequeño; la barra es fina y ancha. */
+.cupos--hero {
+  justify-items: center;
+  gap: var(--space-1);
+  width: 100%;
+  max-width: 24rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.cupos--hero .cupos__estado { font-size: var(--fs-xs); letter-spacing: 0.04em; text-transform: uppercase; }
+
+.cupos--hero .cupos__cifra {
+  justify-content: center;
+  column-gap: 0.375rem;
+}
+
+.cupos--hero .cupos__numero { font-size: 1.5rem; color: var(--color-primary); }
+.cupos--hero .cupos__de { font-size: var(--fs-sm); }
+.cupos--hero .cupos__barra { width: 100%; height: 0.25rem; margin-top: var(--space-2); }
+.cupos--hero:is([data-estado="cerradas"], [data-estado="agotadas"]) .cupos__numero { color: var(--cupos-muted); }
+
+/* Variante en tarjeta (sección de cuenta regresiva y callout) */
+.cupos--card {
+  padding: var(--space-4);
+  background: var(--color-surface-deep);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+/* Variante del formulario (dentro de .event-info) */
+.cupos--form {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ---------- 5. Aparición al hacer scroll ---------------------------------
+   Solo con html.js (el script observa y añade .is-visible). Sin JS, o con
+   movimiento reducido, todo se muestra estático desde el inicio. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    transition:
+      opacity var(--dur-reveal) var(--ease-out),
+      transform var(--dur-reveal) var(--ease-out);
+  }
+
+  .js [data-reveal]:not(.is-visible) {
+    opacity: 0;
+    transform: translate3d(0, var(--reveal-distance), 0);
+  }
+
+  .js [data-reveal-stagger]:not(.is-visible) > * { opacity: 0; }
+
+  .js [data-reveal-stagger].is-visible > * {
+    animation: reveal-in var(--dur-reveal) var(--ease-out) backwards;
+    animation-delay: calc(var(--reveal-i, 0) * var(--stagger));
+  }
+}
+
+@keyframes reveal-in {
+  from { opacity: 0; transform: translate3d(0, var(--reveal-distance), 0); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translate3d(0, 0.75rem, 0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translate3d(0, -0.5rem, 0); }
+}
+
+/* ---------- 6. Pie de página --------------------------------------------- */
+.site-footer {
+  padding-block: var(--space-5);
+  font-size: var(--fs-sm);
+  color: var(--color-on-footer);
+  background: var(--color-footer-bg);
+}
+
+.site-footer .container > * + * { margin-top: var(--space-2); }
+.site-footer p { max-width: 80ch; }
+
+.site-footer a {
+  color: var(--color-footer-link);
+  font-weight: 700;
+}
+
+.site-footer a:hover { text-decoration-thickness: 2px; }
+
+/* ---------- 7. Movimiento reducido ---------------------------------------
+   Sin animaciones ni desplazamientos; solo se conservan las transiciones de
+   color. Los estados finales son los estilos base, así que nada queda oculto. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-property: color, background-color, border-color, outline-color,
+      text-decoration-color, fill, stroke !important;
+    scroll-behavior: auto !important;
+  }
+
+  .btn:hover,
+  .btn:active { transform: none; }
+}
+
+/* ---------- 8. Alto contraste forzado ------------------------------------ */
+@media (forced-colors: active) {
+  .btn { border: 2px solid ButtonText; }
+  .btn.btn:is(:disabled, .is-disabled, [aria-disabled="true"]) { color: GrayText; border-color: GrayText; }
+  .btn__spinner { border-color: ButtonText; border-right-color: transparent; }
+  .btn--cta::before { display: none; }
+  .cupos__barra { border: 1px solid CanvasText; }
+  .cupos__relleno,
+  .live-dot { forced-color-adjust: none; background: Highlight; }
+  .cupos:not([data-estado="abiertas"]) .live-dot { background: GrayText; }
+  .cupos--card { border: 1px solid CanvasText; }
+}
+
+/* ---------- 9. Impresión ------------------------------------------------- */
+/* ---------- 2. Barra superior -------------------------------------------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--color-surface-deep) 72%, transparent);
+  border-bottom: 1px solid var(--color-border);
+  -webkit-backdrop-filter: saturate(1.4) blur(10px);
+  backdrop-filter: saturate(1.4) blur(10px);
+  transition:
+    transform var(--dur-slow) var(--ease-standard),
+    background-color var(--dur-slow) var(--ease-standard);
+}
+
+/* Sombra como capa aparte: se anima solo su opacidad */
+.topbar::after {
+  content: "";
+  position: absolute;
+  inset: 100% 0 auto;
+  height: 14px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--color-shadow) 35%, transparent), transparent);
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-standard);
+}
+
+/* Compacta sin cambiar la altura de layout: la barra sube unos px y el
+   contenido baja la mitad, así queda centrado en una franja más baja. */
+.topbar.is-scrolled {
+  background: color-mix(in srgb, var(--color-surface-deep) 94%, transparent);
+  transform: translateY(calc(var(--topbar-compact) * -1));
+}
+
+.topbar.is-scrolled::after { opacity: 1; }
+
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--topbar-h);
+  transition: transform var(--dur-slow) var(--ease-standard);
+}
+
+.topbar.is-scrolled .topbar__inner { transform: translateY(calc(var(--topbar-compact) / 2)); }
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-sans);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Isotipo: el logo 7K en miniatura */
+.brand__mark {
+  flex: none;
+  width: auto;
+  height: 2.25rem;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.topbar.is-scrolled .brand__mark { transform: scale(0.88); }
+
+.topbar nav { display: none; }
+
+.topbar nav ul {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.topbar nav a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0.375rem 0.75rem;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: color var(--dur) var(--ease-standard), background-color var(--dur) var(--ease-standard);
+}
+
+/* Subrayado fucsia que crece desde la izquierda */
+.topbar nav a::after {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.25rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.topbar nav a:hover {
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-text) 8%, transparent);
+}
+
+.topbar nav a:hover::after { transform: scaleX(0.3); }
+
+.topbar nav a:is(.is-active, [aria-current="true"]) { color: var(--color-primary); }
+.topbar nav a:is(.is-active, [aria-current="true"])::after { transform: scaleX(1); }
+
+@media (min-width: 64rem) {
+  .topbar nav { display: block; margin-inline-start: auto; }
+}
+
+/* Menú de secciones en móvil y tablet (< 64rem): un botón discreto junto a
+   «Inscríbete» despliega la MISMA lista de enlaces bajo la barra. Sin JS el
+   botón no aparece (la barra queda como antes). */
+.topbar__menu { display: none; }
+
+@media (max-width: 63.999rem) {
+  .js .topbar__menu {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-inline-start: calc(var(--space-2) - var(--space-4)); /* más cerca de «Inscríbete» */
+    padding: 0;
+    color: var(--color-text);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color var(--dur) var(--ease-standard), border-color var(--dur) var(--ease-standard);
+  }
+
+  .js .topbar__inner > .btn--cta { margin-inline-start: auto; }
+
+  .topbar__menu:hover { background: color-mix(in srgb, var(--color-text) 8%, transparent); }
+
+  .topbar__menu:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .topbar__menu[aria-expanded="true"] { border-color: var(--color-border-strong); }
+
+  /* Dos trazos que se cruzan en una X al abrir */
+  .topbar__menu-icono,
+  .topbar__menu-icono::before {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1.125rem;
+    height: 2px;
+    margin-left: -0.5625rem;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform var(--dur-slow) var(--ease-out);
+  }
+
+  .topbar__menu-icono { transform: translateY(-3px); }
+
+  .topbar__menu-icono::before {
+    content: "";
+    left: 0;
+    top: 0;
+    margin: 0;
+    transform: translateY(6px);
+  }
+
+  .topbar__menu[aria-expanded="true"] .topbar__menu-icono { transform: rotate(45deg); }
+  .topbar__menu[aria-expanded="true"] .topbar__menu-icono::before { transform: rotate(-90deg); }
+
+  /* Panel: la misma <nav>, anclada bajo la barra y con su mismo vidrio */
+  .js .topbar nav {
+    position: absolute;
+    inset: 100% 0 auto;
+    display: block;
+    padding: var(--space-2) var(--space-4) var(--space-4);
+    background: color-mix(in srgb, var(--color-surface-deep) 98%, transparent);
+    border-bottom: 1px solid var(--color-border);
+    -webkit-backdrop-filter: saturate(1.4) blur(10px);
+    backdrop-filter: saturate(1.4) blur(10px);
+    box-shadow: 0 18px 28px -18px color-mix(in srgb, var(--color-shadow) 70%, transparent);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.5rem);
+    transition:
+      opacity var(--dur) var(--ease-standard),
+      transform var(--dur-slow) var(--ease-out),
+      visibility 0s linear var(--dur-slow);
+  }
+
+  .js .topbar nav.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity var(--dur) var(--ease-standard),
+      transform var(--dur-slow) var(--ease-out),
+      visibility 0s;
+  }
+
+  .topbar nav ul {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    max-width: 40rem;
+    margin-inline: auto;
+  }
+
+  .topbar nav li + li { border-top: 1px solid var(--color-border); }
+
+  .topbar nav a {
+    display: flex;
+    min-height: 3rem;
+    padding-inline: var(--space-2);
+    font-size: var(--fs-md);
+    border-radius: 0;
+  }
+
+  .topbar nav a::after { left: var(--space-2); right: auto; width: 1.5rem; }
+  .topbar nav a:hover { background: transparent; }
+}
+
+/* Teléfonos muy angostos (< 352px): el isotipo basta como marca y deja sitio al botón del menú. */
+@media (max-width: 21.999rem) {
+  .js .brand__texto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@media print {
+  .topbar { display: none !important; }
+
+  @page { margin: 15mm; }
+  html, body { background: #fff; }
+  body { font-size: 11pt; }
+  .skip-link { display: none !important; }
+  .js [data-reveal],
+  .js [data-reveal-stagger] > * {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  .site-footer {
+    background: none;
+    color: var(--color-text-muted);
+    border-top: 1px solid var(--color-border);
+    padding: 6pt 0 0;
+  }
+}

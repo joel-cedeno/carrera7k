@@ -1,0 +1,266 @@
+/* ==========================================================================
+   tokens.css · Carrera Atlética 7K – Únete contra la violencia a la mujer
+   --------------------------------------------------------------------------
+   ÚNICA fuente de valores de marca (colores, tipografías, radios, sombras,
+   recursos) y de movimiento (duraciones, curvas). base.css, landing.css y
+   form.css solo consumen estas variables: no contienen colores ni familias
+   tipográficas literales.
+
+   La marca sale de la línea gráfica del cliente (docs/linea-grafica.md).
+   Es un ÚNICO tema oscuro: el fondo de todo el sitio es el morado noche
+   #290055 del arte. No hay modo claro.
+
+   Orden del archivo:
+     0. Fuentes propias (@font-face, woff2 locales)
+     1. Paleta del arte (primitivos)
+     2. Colores derivados (superficies, textos, estados)
+     3. Roles semánticos → lo que consumen las hojas
+     4. Tipografía, espacio, radios, sombras
+     5. Movimiento
+     6. Recursos de marca (trama de puntos)
+     7. Impresión
+   ========================================================================== */
+
+/* ---------- 0. Fuentes propias --------------------------------------------
+   El servidor envía la CSP `font-src 'self'`: solo fuentes de este sitio.
+   Archivos y licencias en web/assets/fuentes/. */
+@font-face {
+  font-family: "Poppins";
+  src: url("../assets/fuentes/poppins-900.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Metropolis";
+  src: url("../assets/fuentes/metropolis-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Metropolis";
+  src: url("../assets/fuentes/metropolis-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+
+  /* ---------- 1. Paleta del arte (primitivos) --------------------------- */
+  --morado-noche: #290055;   /* fondo de toda la pieza */
+  --morado-1:     #5c22ad;   /* botón (abajo) y trama (abajo) */
+  --morado-2:     #8921d0;   /* botón (arriba) y trama (arriba) */
+  --k-1:          #8d00a4;   /* cuerpo de la K */
+  --k-2:          #ad20e8;
+  --k-brillo-1:   #ac00cd;   /* brillo de la K */
+  --k-brillo-2:   #e200dd;
+  --magenta:      #ae019c;   /* recuadro de la fecha */
+  --fucsia:       #ce00ff;   /* resaltado de «LA MUJER» */
+  --amarillo:     #fcc40d;   /* NOV, 2026, «Inscríbete Aquí», reloj */
+  --blanco:       #ffffff;
+  --negro:        #000000;
+
+  /* ---------- 2. Colores derivados --------------------------------------
+     El arte no trae grises ni colores de estado: se derivan del morado
+     noche y se verificaron con contraste AA sobre #290055 y sobre las
+     superficies (ratios indicados). */
+  --morado-profundo:  #1b0039;   /* fondo de controles, zonas hundidas */
+  --morado-alt:       #230049;   /* secciones alternas */
+  --morado-superficie: #35106e;  /* tarjetas */
+  --morado-superficie-2: #3f1a7d;/* tarjetas, nivel 2 */
+  --lila-texto:       #dccff3;   /* texto secundario · 11:1 sobre fondo, 9:1 sobre tarjeta */
+  --lila-sutil:       #bfaede;   /* texto sutil · 7.7:1 sobre fondo, 6:1 sobre tarjeta */
+  --lila-borde:       #9b86bf;   /* bordes de controles · 3.6:1 (no texto) */
+
+  --rosa-error:       #ffb3c6;   /* error · 10:1 sobre fondo */
+  --menta-exito:      #7ff0c0;   /* éxito · 12:1 sobre fondo */
+  --celeste-info:     #9fd3ff;   /* información · 10:1 sobre fondo */
+  --ambar-aviso:      var(--amarillo); /* aviso · 10:1 sobre fondo */
+
+  /* ---------- 3. Roles semánticos ---------------------------------------- */
+  --color-bg:             var(--morado-noche);
+  --color-bg-alt:         var(--morado-alt);
+  --color-surface:        var(--morado-superficie);
+  --color-surface-muted:  var(--morado-superficie-2);
+  --color-surface-deep:   var(--morado-profundo);
+  --color-text:           var(--blanco);
+  --color-text-muted:     var(--lila-texto);
+  --color-text-subtle:    var(--lila-sutil);
+  --color-border:         color-mix(in srgb, var(--blanco) 14%, transparent);
+  --color-border-strong:  var(--lila-borde);
+  --color-track:          color-mix(in srgb, var(--blanco) 14%, transparent);
+
+  --color-primary:        var(--amarillo);        /* enlaces, títulos secundarios, hitos */
+  --color-primary-hover:  #ffd44a;
+  --color-on-primary:     var(--morado-noche);
+
+  --color-accent:         var(--fucsia);          /* decorativo: trazos, bordes (3.9:1, no texto) */
+  --color-accent-soft:    color-mix(in srgb, var(--fucsia) 18%, transparent);
+  --color-accent-text:    #ec9dff;                /* fucsia aclarado para texto · 8.4:1 */
+
+  --color-danger:         var(--rosa-error);
+  --color-danger-soft:    color-mix(in srgb, var(--rosa-error) 14%, transparent);
+  --color-success:        var(--menta-exito);
+  --color-success-soft:   color-mix(in srgb, var(--menta-exito) 12%, transparent);
+  --color-warning:        var(--ambar-aviso);
+  --color-warning-soft:   color-mix(in srgb, var(--ambar-aviso) 14%, transparent);
+  --color-info:           var(--celeste-info);
+  --color-info-soft:      color-mix(in srgb, var(--celeste-info) 14%, transparent);
+
+  --color-live:           var(--menta-exito);     /* punto "en vivo" activo */
+  --color-live-off:       var(--lila-borde);      /* punto inactivo */
+
+  --color-disabled-bg:    color-mix(in srgb, var(--blanco) 14%, transparent);
+  --color-on-disabled:    var(--lila-texto);
+  --color-readonly-bg:    var(--morado-profundo);
+  --color-readonly-stripe: color-mix(in srgb, var(--blanco) 5%, transparent);
+
+  --color-focus:          var(--amarillo);
+  --color-focus-halo:     color-mix(in srgb, var(--amarillo) 30%, transparent);
+  --color-selection-bg:   var(--fucsia);
+  --color-selection-text: var(--blanco);
+  --color-shadow:         var(--negro);           /* base de sombras (con transparencia) */
+
+  /* Botón «Inscríbete Aquí» del arte: degradado vertical y texto amarillo
+     (4.1:1 arriba: válido para texto grande). La variante -sm es algo más
+     oscura arriba (4.7:1) para los botones con texto pequeño. */
+  --cta-gradient:     linear-gradient(180deg, var(--morado-2) 0%, var(--morado-1) 100%);
+  --cta-gradient-sm:  linear-gradient(180deg, #7a1fc2 0%, var(--morado-1) 100%);
+  --color-on-cta:     var(--amarillo);
+  --cta-shine:        color-mix(in srgb, var(--blanco) 28%, transparent);
+
+  /* Cuerpo de la K (para detalles de interfaz que repiten el logo) */
+  --k-gradient:       linear-gradient(90deg, var(--k-1), var(--k-2));
+  --fecha-gradient:   linear-gradient(135deg,
+                        var(--magenta) 0%,
+                        color-mix(in srgb, var(--magenta) 98%, transparent) 14%,
+                        color-mix(in srgb, var(--magenta) 91%, transparent) 28%,
+                        color-mix(in srgb, var(--magenta) 80%, transparent) 42%,
+                        color-mix(in srgb, var(--magenta) 65%, transparent) 56%,
+                        color-mix(in srgb, var(--magenta) 45%, transparent) 70%,
+                        color-mix(in srgb, var(--magenta) 22%, transparent) 85%,
+                        transparent 100%);
+
+  /* Pie de página */
+  --color-footer-bg:   var(--morado-profundo);
+  --color-on-footer:   var(--lila-texto);
+  --color-footer-link: var(--blanco);
+
+  /* Etiquetas del recorrido */
+  --color-route-water:       var(--color-info);
+  --color-route-water-soft:  var(--color-info-soft);
+  --color-route-health:      var(--color-danger);
+  --color-route-health-soft: var(--color-danger-soft);
+
+  /* Máscaras CSS: solo importa el canal alfa (no es un color de marca) */
+  --mask-opaque: #000;
+
+  /* ---------- 4. Tipografía, espacio, radios, sombras ------------------- */
+  --font-sans: "Metropolis", system-ui, -apple-system, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Poppins", "Metropolis", system-ui, sans-serif;   /* cifras y titulares */
+  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Roboto Mono",
+               "Liberation Mono", Menlo, Consolas, monospace;
+  --fw-display: 900;
+
+  --fs-xs:  0.8125rem;
+  --fs-sm:  0.875rem;
+  --fs-md:  1rem;
+  --fs-lg:  1.125rem;
+  --fs-xl:  1.375rem;
+  --fs-2xl: clamp(1.75rem, 1.25rem + 2.2vw, 2.5rem);
+  --fs-3xl: clamp(2.625rem, 1.25rem + 6.4vw, 5.25rem);
+  --lh-tight: 1.15;
+  --lh: 1.55;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  --radius-sm:   6px;
+  --radius:      10px;
+  --radius-lg:   16px;
+  --radius-pill: 999px;
+
+  --shadow-sm:  0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow:     0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -8px rgb(0 0 0 / 0.55);
+  --shadow-lg:  0 2px 4px rgb(0 0 0 / 0.3), 0 18px 36px -12px rgb(0 0 0 / 0.65);
+  --shadow-btn:       0 1px 0 rgb(255 255 255 / 0.16) inset, 0 6px 18px -6px rgb(0 0 0 / 0.6);
+  --shadow-btn-hover: 0 1px 0 rgb(255 255 255 / 0.16) inset, 0 14px 28px -10px rgb(0 0 0 / 0.65),
+                      0 0 0 1px color-mix(in srgb, var(--amarillo) 35%, transparent);
+  --shadow-cta-glow:  0 0 0 0 color-mix(in srgb, var(--k-2) 55%, transparent);
+  --shadow-cta-glow-2: 0 0 0 14px color-mix(in srgb, var(--k-2) 0%, transparent);
+
+  --control-h: 2.875rem;   /* 46px ≥ 44px */
+  --topbar-h:  3.75rem;
+
+  /* ---------- 5. Movimiento -----------------------------------------------
+     Todo se desactiva con prefers-reduced-motion: reduce (ver base.css). */
+  --dur-fast:     140ms;   /* pulsaciones, active */
+  --dur:          220ms;   /* hover, colores */
+  --dur-slow:     420ms;   /* cambios de estado */
+  --dur-reveal:   720ms;   /* aparición al hacer scroll */
+  --dur-hero:     900ms;   /* entrada de piezas del hero */
+  --dur-progress: 1400ms;  /* barras de progreso */
+  --dur-draw:     1600ms;  /* dibujo de la ruta */
+  --dur-loop:     14s;     /* vuelta del corredor en la ruta */
+  --dur-trama:    9s;      /* respiración de la trama de puntos */
+  --dur-shine:    4.5s;    /* brillo que recorre el botón */
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring:   cubic-bezier(0.34, 1.4, 0.64, 1);  /* rebote muy leve */
+
+  --stagger:         70ms;   /* escalonado entre hijos */
+  --stagger-hero:    90ms;
+  --reveal-distance: 18px;
+  --lift:            2px;    /* elevación de botones en hover */
+
+  /* ---------- 6. Recursos de marca ----------------------------------------
+     Trama de puntos: baldosa de una columna (18,64 de ancho) que se repite
+     en horizontal. La de móvil ocupa 325 de alto (la mitad superior del
+     arte); la de escritorio, 768 (casi todo el primer pantallazo). */
+  --trama-movil:      url("../assets/marca/trama-puntos.svg");
+  --trama-movil-h:    325.31px;
+  --trama-escritorio: url("../assets/marca/trama-puntos-escritorio.svg");
+  --trama-escritorio-h: 768px;
+  --trama-w:          18.64px;
+}
+
+/* ---------- 7. Impresión: tinta negra sobre papel blanco ------------------ */
+@media print {
+  :root {
+    --color-bg: #fff;
+    --color-bg-alt: #fff;
+    --color-surface: #fff;
+    --color-surface-muted: #f3f3f3;
+    --color-surface-deep: #fff;
+    --color-text: #000;
+    --color-text-muted: #222;
+    --color-text-subtle: #444;
+    --color-border: #bbb;
+    --color-border-strong: #888;
+    --color-primary: var(--morado-noche);
+    --color-accent-text: var(--morado-noche);
+    --color-success: #000;
+    --color-success-soft: #fff;
+    --color-accent-soft: #fff;
+    --color-danger: #000;
+    --color-danger-soft: #fff;
+    --color-readonly-bg: #fff;
+    --color-readonly-stripe: transparent;
+    --shadow-sm: none;
+    --shadow: none;
+    --shadow-lg: none;
+  }
+}

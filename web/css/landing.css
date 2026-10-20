@@ -1,0 +1,1413 @@
+/* ==========================================================================
+   landing.css · página informativa (body.landing)
+   Se carga después de tokens.css y base.css. Solo consume variables.
+
+   Hero: reproduce el arte del cliente (docs/linea-grafica.md). En móvil es
+   la columna centrada del SVG (base 319 de ancho); desde 64rem parte de la
+   composición del .ai (1440 × 768): logo a la izquierda, fecha y hora a la
+   derecha, y debajo, centrados sobre el mismo eje, el par de botones, la
+   franja en vivo (cuenta regresiva | cupos) y el pie con el Ministerio y
+   los aliados. Los tamaños del arte se expresan en em del recuadro de
+   fecha (--fecha-fs) para que todo escale junto.
+   ========================================================================== */
+
+/* ---------- 1. Base de la landing ---------------------------------------- */
+.landing {
+  --section-pad: clamp(3rem, 2rem + 4vw, 5rem);   /* mismo aire arriba y abajo en todas las secciones */
+  --measure: 65ch;
+  --fs-quote: clamp(1.375rem, 1.05rem + 1.4vw, 2rem);
+  --topbar-compact: 0.5rem;   /* cuánto se compacta la barra al hacer scroll */
+}
+
+.landing .container { max-width: 72rem; }
+
+/* Las anclas no quedan tapadas por la barra fija */
+.landing main [id] { scroll-margin-top: calc(var(--topbar-h) + var(--space-4)); }
+
+.landing h2 {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-display);
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.landing h3 {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--color-primary);
+}
+
+.section strong { font-weight: 700; color: var(--color-text); }
+
+/* ---------- 3. Hero ------------------------------------------------------
+   Jerarquía, de arriba abajo: marca (logo) → fecha y hora → acciones (par
+   de botones) → cuenta regresiva y cupos («franja en vivo») → Ministerio
+   y aliados. Todo cuelga de un único eje vertical: en móvil y tablet es una
+   columna centrada; en escritorio las dos filas de dos columnas (logo |
+   fecha, cuenta regresiva | cupos) se reparten a ambos lados del eje y los
+   botones y el pie van centrados sobre él. */
+.hero {
+  /* Escala del arte: «15» mide 50 a 319 de ancho (15,7 vw) */
+  --fecha-fs: clamp(2.75rem, 15.7vw, 4.25rem);
+  --hora-fs: calc(var(--fecha-fs) * 0.374);
+  --btn-hero-fs: clamp(1.3rem, 6.5vw, 1.75rem);
+  --btn-sec-fs: var(--fs-md);
+  --count-fs: clamp(1.75rem, 8.5vw, 2.25rem);     /* cifras de la cuenta regresiva */
+  --apoyo-fs: clamp(0.8125rem, 2.5vw + 0.2rem, 1rem);
+  --aliado-h: clamp(2.1rem, 10.9vw, 2.75rem);
+  --ministerio-w: 24rem;      /* logo del Ministerio en el pie (vertical en móvil; ≤ 1,2× del PNG) */
+  --hero-pad-x: var(--space-4);
+  --hero-filete: color-mix(in srgb, var(--blanco) 32%, transparent);   /* filetes y separadores */
+  --hero-gap: clamp(1.75rem, 8vw, 2.75rem);        /* ritmo vertical entre bloques */
+  --hero-franja-w: 56rem;                          /* ancho de la franja en vivo y de los filetes del pie */
+  --hero-col-gap: clamp(2.5rem, 5vw, 4.5rem);      /* separación entre el logo y el bloque de fecha */
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+/* Trama de puntos del arte: baldosa repetida en horizontal, se desvanece
+   hacia abajo. Respira muy levemente (desplazamiento de medio punto). */
+.hero__trama {
+  position: absolute;
+  z-index: -1;
+  inset: -0.75rem -1.5rem auto -1.5rem;
+  height: var(--trama-movil-h);
+  background-image: var(--trama-movil);
+  background-repeat: repeat-x;
+  background-size: var(--trama-w) var(--trama-movil-h);
+  background-position: center top;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__trama {
+    animation:
+      trama-in 1.6s var(--ease-out) backwards,
+      trama-respira var(--dur-trama) var(--ease-in-out) 1.6s infinite alternate;
+  }
+}
+
+@keyframes trama-in {
+  from { opacity: 0; transform: translate3d(0, -0.5rem, 0); }
+}
+
+@keyframes trama-respira {
+  from { transform: translate3d(0, 0, 0); opacity: 1; }
+  to   { transform: translate3d(-0.3rem, 0.45rem, 0); opacity: 0.82; }
+}
+
+.hero__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding: clamp(1.75rem, 9vw, 3rem) var(--hero-pad-x) clamp(2rem, 7vw, 3rem);
+}
+
+/* Logo + fecha/hora */
+.hero__arriba {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.hero__logo {
+  width: min(67%, 20rem);
+  margin: 0;
+  line-height: 0;
+}
+
+.logo7k {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.hero__cuando {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: clamp(1.5rem, 9vw, 2.75rem);
+}
+
+/* Recuadro de fecha: «15» y «NOV» apilados; «2026» en vertical a la derecha,
+   leído de abajo hacia arriba. Fondo magenta que se desvanece en diagonal. */
+.fecha {
+  font-size: var(--fecha-fs);
+  line-height: 1;
+}
+
+.fecha time {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  column-gap: 0.1em;
+  align-items: start;
+  padding: 0.12em 0.14em 0.1em 0.16em;
+  background: var(--fecha-gradient);
+}
+
+.fecha__dia,
+.fecha__mes,
+.fecha__anio {
+  font-family: var(--font-display);
+  font-weight: var(--fw-display);
+  line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.fecha__dia {
+  grid-area: 1 / 1;
+  font-size: 1em;
+  letter-spacing: -0.02em;
+  color: var(--blanco);
+}
+
+.fecha__mes {
+  grid-area: 2 / 1;
+  margin-top: 0.06em;
+  font-size: 0.43em;
+  letter-spacing: 0.01em;
+  color: var(--amarillo);
+}
+
+.fecha__anio {
+  grid-area: 1 / 2 / 3 / 3;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 0.47em;
+  letter-spacing: 0.02em;
+  color: var(--amarillo);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+/* Reloj + «07:00» */
+.hora {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  margin-top: calc(var(--fecha-fs) * 0.16);
+  font-family: var(--font-sans);
+  font-size: var(--hora-fs);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--blanco);
+}
+
+.hora__texto { font-variant-numeric: tabular-nums; }
+
+.reloj {
+  flex: none;
+  width: 1.35em;
+  height: 1.35em;
+  overflow: visible;
+}
+
+.reloj__esfera { fill: var(--amarillo); }
+
+.reloj__marcas line {
+  stroke: var(--morado-noche);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+}
+
+.reloj__agujas line {
+  stroke: var(--morado-noche);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  transform-origin: 13px 13px;
+}
+
+.reloj__horario { transform: rotate(210deg); }   /* las 7 */
+.reloj__minutero { transform: rotate(0deg); }    /* en punto */
+.reloj__segundero { stroke-width: 0.8; }
+.reloj__eje { fill: var(--morado-noche); }
+
+/* "Tic": el segundero avanza a saltos */
+@media (prefers-reduced-motion: no-preference) {
+  .reloj__segundero { animation: reloj-tic 60s steps(60, end) infinite; }
+}
+
+@keyframes reloj-tic { to { transform: rotate(1turn); } }
+
+/* Par de acciones: «Inscríbete Aquí» (principal, el botón del arte) y
+   «Conoce la carrera» (secundario, fantasma). En móvil, apilados con el
+   mismo ancho del botón del arte (≈ 60 % del ancho); desde 48rem, lado a
+   lado y centrados sobre el eje, con la misma altura. */
+.hero__acciones {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-3);
+  width: calc(var(--btn-hero-fs) * 9.1);
+  max-width: 100%;
+  margin-top: var(--hero-gap);
+}
+
+.btn--hero {
+  width: 100%;
+  min-height: 0;
+  padding: 0.44em 0.8em;
+  font-size: var(--btn-hero-fs);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.btn--hero-sec {
+  min-height: 0;
+  padding: 0.6em 1.4em;
+  font-size: var(--btn-sec-fs);
+  letter-spacing: 0.01em;
+  border-radius: calc(var(--btn-hero-fs) * 0.58);   /* mismo radio que el botón del arte */
+  --btn-border: var(--hero-filete);
+}
+
+/* Franja en vivo: cuenta regresiva y cupos, los dos datos que cambian.
+   Apilados y centrados en móvil y tablet, separados por un filete corto;
+   en escritorio, dos columnas iguales a cada lado del eje con un filete
+   vertical en el centro. */
+.hero__vivo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  width: 100%;
+  max-width: 24rem;
+  margin-top: var(--hero-gap);
+}
+
+/* Cuenta regresiva (variante del hero: sin tarjeta, cifras en Poppins
+   amarillo sobre la trama, rótulo arriba) */
+.countdown--hero {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.countdown--hero .countdown__label {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.countdown--hero .countdown__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: 100%;
+}
+
+.countdown--hero .countdown__unit {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+  overflow: hidden;
+  padding-inline: var(--space-1);
+  perspective: 400px;
+}
+
+/* Filetes verticales entre unidades (menos a la izquierda de la primera) */
+.countdown--hero .countdown__unit + .countdown__unit { border-left: 1px solid var(--hero-filete); }
+
+.countdown--hero .countdown__value {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: var(--count-fs);
+  font-weight: var(--fw-display);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primary);
+}
+
+.countdown--hero .countdown__unit small {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* Cambio de valor: el número entra deslizándose desde arriba (tipo flip).
+   Los segundos cambian cada segundo: recorrido mucho más corto. */
+.countdown__unit.is-tick .countdown__value { animation: count-tick 600ms var(--ease-out); }
+.countdown__unit:last-child.is-tick .countdown__value { animation-name: count-tick-soft; animation-duration: 450ms; }
+
+@keyframes count-tick {
+  0%   { opacity: 0; transform: translate3d(0, -60%, 0) rotateX(55deg); }
+  60%  { opacity: 1; }
+  100% { transform: none; }
+}
+
+@keyframes count-tick-soft {
+  0%   { opacity: 0.35; transform: translate3d(0, -18%, 0); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* Separador entre la cuenta regresiva y los cupos: filete corto centrado */
+.hero__vivo .cupos--hero {
+  position: relative;
+  padding-top: var(--space-5);
+}
+
+.hero__vivo .cupos--hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4rem;
+  height: 1px;
+  background: var(--hero-filete);
+  transform: translateX(-50%);
+}
+
+/* Pie, todo sobre el mismo eje: arriba el logo del Ministerio (organizador,
+   más grande que los aliados) y debajo, separado, «Con el apoyo de» con los
+   aliados, para que no se lea como un aliado más. El PNG es blanco y no tiene
+   SVG: el ancho se limita a ~1,2× su tamaño nativo para que no se vea borroso. */
+.hero__pie {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: clamp(2.5rem, 11vw, 4rem);
+}
+
+.hero__ministerio {
+  display: block;
+  margin-bottom: clamp(1.75rem, 7vw, 2.5rem);
+  line-height: 0;
+}
+
+/* Vertical hasta 48rem (412 × 206); horizontal desde 48rem (455 × 113) */
+.hero__ministerio img {
+  display: block;
+  width: min(100%, var(--ministerio-w));
+  height: auto;
+  margin-inline: auto;
+}
+
+/* «Con el apoyo de» como rótulo centrado entre dos filetes, sobre los
+   aliados: la franja queda simétrica respecto al eje del hero */
+.hero__apoyo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: var(--hero-franja-w);
+}
+
+.hero__apoyo-titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.hero__apoyo-titulo::before,
+.hero__apoyo-titulo::after {
+  content: "";
+  flex: 1 1 0;
+  height: 1px;
+  background: var(--hero-filete);
+}
+
+.aliados {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.75rem, 3vw, 1.5rem) clamp(0.75rem, 4vw, 2rem);
+  margin: clamp(0.875rem, 3.5vw, 1.25rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aliados__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/* Alturas relativas del arte (la más alta, Mujeres sin Violencia, = 1) */
+.aliados__item img { width: auto; height: calc(var(--aliado-h) * var(--k, 1)); }
+.aliados__item--es  { --k: 0.75; }
+.aliados__item--giz { --k: 0.8; }
+.aliados__item--pvm { --k: 0.65; }
+.aliados__item--msv { --k: 1; }
+
+/* Tablet: logo y fecha lado a lado; botones en par; el resto sigue apilado
+   y centrado */
+@media (min-width: 48rem) {
+  .hero {
+    /* El bloque de fecha y hora mide lo mismo de alto que el logo: su
+       tamaño sale del ancho del logo (alto del logo = 0,713 × ancho; alto
+       natural del bloque ≈ 2,34 × --fecha-fs) */
+    --logo-w: clamp(15rem, 32vw, 24rem);
+    --fecha-fs: calc(var(--logo-w) * 0.298);
+    --btn-hero-fs: clamp(1.5rem, 2.6vw, 2rem);
+    --btn-sec-fs: clamp(1rem, 1.4vw, 1.125rem);
+    --count-fs: clamp(2rem, 3.6vw, 2.5rem);
+    --apoyo-fs: clamp(0.875rem, 1.1vw, 1.1875rem);
+    --aliado-h: clamp(2.5rem, 4.6vw, 3.5rem);
+    --ministerio-w: clamp(24rem, 40vw, 30rem);
+    --hero-pad-x: var(--space-6);
+    --hero-gap: clamp(2rem, 4.5vh, 3rem);
+  }
+
+  /* Logo y fecha como UN solo grupo centrado en el eje de la página (la
+     caja que va del borde izquierdo del logo al derecho del recuadro de
+     fecha queda centrada). El bloque de fecha se estira al alto del logo:
+     el recuadro arranca en su borde superior y la fila del reloj termina
+     en su base (la del lema). */
+  .hero__arriba {
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    gap: var(--hero-col-gap);
+  }
+
+  .hero__logo { width: var(--logo-w); }
+
+  .hero__cuando {
+    justify-content: space-between;
+    margin-top: 0;
+  }
+
+  /* Los dos botones a su tamaño natural, de la misma altura, lado a lado y
+     centrados como pareja sobre el eje */
+  .hero__acciones {
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;   /* el fantasma toma el alto natural del botón del arte; nada se estira a lo ancho */
+    gap: var(--space-4);
+    width: auto;
+  }
+
+  .btn--hero { width: auto; min-width: 9.1em; white-space: nowrap; }
+  .btn--hero-sec { padding-inline: 1.75em; white-space: nowrap; }
+
+  .hero__vivo { max-width: 30rem; }
+  .countdown--hero .countdown__unit { padding-inline: var(--space-2); }
+
+  .aliados { gap: var(--space-4) clamp(1.75rem, 4vw, 3rem); }
+}
+
+/* Escritorio: primer pantallazo completo (100svh − barra). Las medidas que
+   gobiernan el alto (logo, fecha, botón, cifras, logo del Ministerio y
+   aliados) se atan al alto de la ventana para que la composición quepa a
+   768 y a 720 de alto sin cortes accidentales. */
+@media (min-width: 64rem) {
+  .hero {
+    /* Logo por ancho o por alto, lo que antes limite (a 768 de alto:
+       ≈ 330 × 235); la fecha, en proporción al logo (ver 48rem) */
+    --logo-w: clamp(16rem, min(26vw, 43vh), 24rem);
+    --btn-hero-fs: clamp(1.5rem, min(2.6vw, 4.5vh), 2.25rem);   /* ≈ 65 px de alto a 1366×768 */
+    --btn-sec-fs: clamp(1rem, 1.2vw, 1.125rem);
+    --count-fs: clamp(1.75rem, 4.4vh, 2.5rem);
+    --apoyo-fs: clamp(1rem, 1.3vw, 1.25rem);
+    /* Aliados y logo del Ministerio por alto de pantalla (a 768: aliados
+       ≈ 46 px; logo ≈ 384 × 95 px, siempre mayor que los aliados y nunca
+       por encima de 1,2× el PNG: 34rem ≈ 545 px). */
+    --aliado-h: clamp(2.25rem, 6vh, 3.5rem);
+    --ministerio-w: clamp(20rem, 50vh, 34rem);
+    --hero-pad-x: clamp(2rem, 4.5vw, 5rem);
+    --hero-gap: clamp(1rem, 2.6vh, 2.25rem);
+  }
+
+  .hero__trama {
+    height: var(--trama-escritorio-h);
+    background-image: var(--trama-escritorio);
+    background-size: var(--trama-w) var(--trama-escritorio-h);
+  }
+
+  /* El sobrante de alto se reparte por igual entre los cuatro bloques
+     (y no solo encima del pie), así el ritmo vertical se mantiene en
+     pantallas más altas que anchas */
+  .hero__inner {
+    justify-content: space-between;
+    min-height: calc(100svh - var(--topbar-h));
+    padding-top: clamp(1rem, 2.5vh, 3rem);
+    padding-bottom: clamp(1rem, 2vh, 2rem);
+  }
+
+  /* Franja en vivo: dos columnas iguales a cada lado del eje, cada una con
+     su contenido centrado, y un filete vertical justo en el eje */
+  .hero__vivo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+    align-items: center;
+    column-gap: clamp(1.5rem, 3vw, 3rem);
+    width: 100%;
+    max-width: var(--hero-franja-w);
+  }
+
+  .hero__vivo::before {
+    content: "";
+    grid-area: 1 / 2;
+    align-self: stretch;
+    width: 1px;
+    background: var(--hero-filete);
+  }
+
+  .countdown--hero { grid-area: 1 / 1; justify-self: end; width: min(100%, 24rem); }
+  .hero__vivo .cupos--hero { grid-area: 1 / 3; justify-self: start; margin: 0; padding-top: 0; }
+  .hero__vivo .cupos--hero::before { display: none; }
+
+  .hero__pie { margin-top: var(--hero-gap); }
+
+  .hero__ministerio { margin-bottom: clamp(0.875rem, 2.4vh, 1.5rem); }
+  .aliados { margin-top: var(--space-3); }
+}
+
+/* ---------- 3b. Animaciones de entrada del hero (solo CSS) --------------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* Logo por capas: entran el 7 y la K, la corredora "corre" a su sitio,
+     las letras de ÚNETE aparecen escalonadas, el resaltado se barre y el
+     lema se funde. Las capas SVG se transforman en su propia caja. */
+  .logo7k :is(.logo7k__siete, .logo7k__k, .logo7k__k-brillo, .logo7k__corredora,
+              .logo7k__letra, .logo7k__resaltado, .logo7k__lema) {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation-fill-mode: backwards;
+    animation-timing-function: var(--ease-out);
+  }
+
+  .logo7k__siete   { animation: logo-desde-izq 850ms 150ms; }
+  .logo7k__k       { animation: logo-desde-der 850ms 250ms; }
+  .logo7k__k-brillo { animation: fade-in 700ms 750ms; }
+  .logo7k__corredora { animation: logo-corre 1000ms 500ms; }
+
+  .logo7k__letra { animation: logo-letra 520ms var(--ease-spring); }
+  .logo7k__letra:nth-child(1) { animation-delay: 950ms; }
+  .logo7k__letra:nth-child(2) { animation-delay: 1040ms; }
+  .logo7k__letra:nth-child(3) { animation-delay: 1130ms; }
+  .logo7k__letra:nth-child(4) { animation-delay: 1220ms; }
+  .logo7k__letra:nth-child(5) { animation-delay: 1310ms; }
+
+  .logo7k__resaltado { transform-origin: left center; animation: logo-barrido 520ms 1550ms; }
+  .logo7k__lema { animation: fade-in 700ms 1500ms; }
+
+  /* Resto de piezas, en el orden de la jerarquía: fecha → hora → botones →
+     franja en vivo (cuenta regresiva y cupos a la vez, filete incluido) →
+     Ministerio → «Con el apoyo de» → aliados */
+  .fecha,
+  .hora,
+  .btn--hero,
+  .btn--hero-sec,
+  .countdown--hero:not([hidden]),
+  .cupos--hero,
+  .hero__vivo::before,
+  .hero__ministerio img,
+  .hero__apoyo-titulo,
+  .aliados__item {
+    animation: fade-up var(--dur-hero) var(--ease-out) backwards;
+  }
+
+  .fecha { animation-delay: 1150ms; }
+  .fecha__dia { animation: fecha-baja 700ms var(--ease-out) 1300ms backwards; }
+  .fecha__mes { animation: fade-in 600ms var(--ease-out) 1450ms backwards; }
+  .fecha__anio { animation: fecha-sube 800ms var(--ease-out) 1400ms backwards; }
+  .hora { animation-name: hero-pop; animation-delay: 1650ms; }
+  .btn--hero { animation-delay: 1850ms; }
+  .btn--hero-sec { animation-delay: 1950ms; }
+
+  /* «Inscríbete Aquí» lleva además el latido de .btn--pulse (base.css), cuya
+     regla es más específica y reemplazaba la entrada: el botón se veía desde
+     el inicio. Aquí se encadenan ambas: entra como el resto y, ya visible,
+     empieza a latir. Con el puntero o el foco el latido se detiene. */
+  .hero .btn--cta.btn--hero.btn--pulse:not(.is-disabled):not(:disabled) {
+    animation:
+      fade-up var(--dur-hero) var(--ease-out) 1850ms backwards,
+      cta-pulse 2.8s var(--ease-in-out) 3200ms infinite;
+  }
+
+  .hero .btn--cta.btn--hero.btn--pulse:is(:hover, :focus-visible):not(.is-disabled):not(:disabled) {
+    animation: fade-up var(--dur-hero) var(--ease-out) 1850ms backwards;
+  }
+  .countdown--hero:not([hidden]) { animation-delay: 2100ms; }
+  .hero__vivo::before { animation-name: fade-in; animation-delay: 2100ms; }
+  .cupos--hero { animation-delay: 2200ms; }
+  .hero__ministerio img { animation-delay: 2350ms; }
+  .hero__apoyo-titulo { animation-delay: 2500ms; }
+  .aliados__item { animation-delay: calc(2600ms + var(--i, 0) * 110ms); }
+  .aliados__item:nth-child(2) { --i: 1; }
+  .aliados__item:nth-child(3) { --i: 2; }
+  .aliados__item:nth-child(4) { --i: 3; }
+}
+
+@keyframes logo-desde-izq {
+  from { opacity: 0; transform: translate3d(-28px, 0, 0); }
+}
+
+@keyframes logo-desde-der {
+  from { opacity: 0; transform: translate3d(28px, 0, 0); }
+}
+
+@keyframes logo-corre {
+  0%   { opacity: 0; transform: translate3d(-70px, 6px, 0); }
+  30%  { opacity: 1; transform: translate3d(-40px, -4px, 0); }
+  60%  { transform: translate3d(-14px, 3px, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes logo-letra {
+  from { opacity: 0; transform: translate3d(0, 14px, 0) scale(0.9); }
+}
+
+@keyframes logo-barrido {
+  from { transform: scaleX(0); }
+}
+
+@keyframes fecha-baja {
+  from { opacity: 0; transform: translate3d(0, -0.35em, 0); }
+}
+
+/* «2026» está rotado 180°: un translate negativo lo hace subir en pantalla */
+@keyframes fecha-sube {
+  from { opacity: 0; transform: rotate(180deg) translate3d(0, -0.9em, 0); }
+  to   { opacity: 1; transform: rotate(180deg) translate3d(0, 0, 0); }
+}
+
+@keyframes hero-pop {
+  from { opacity: 0; transform: scale(0.8); }
+}
+
+/* ---------- 4. Convocatoria ---------------------------------------------
+   Una sola columna centrada sobre el mismo eje que el hero: antetítulo,
+   título, lema, mensaje rotativo, texto y los tres datos en fila. */
+.intro { padding-top: var(--section-pad); }
+
+.intro__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 56rem;
+  text-align: center;
+}
+
+.intro .eyebrow {
+  justify-content: center;
+  margin-bottom: 0;
+  text-wrap: balance;
+}
+
+.intro h2 { margin-top: var(--space-3); }
+
+.intro .tagline {
+  margin-top: var(--space-2);
+  max-width: 30ch;
+  font-size: clamp(1.25rem, 1rem + 1.2vw, 1.75rem);
+  line-height: 1.25;
+}
+
+/* Mensajes rotativos: todos en la misma celda → la altura es la del más
+   largo y el layout no salta. Sin JS solo se ve el primero (.is-current). */
+.rotator {
+  display: grid;
+  max-width: 40ch;
+  margin-top: var(--space-5);
+  font-size: clamp(1.0625rem, 1rem + 0.45vw, 1.3125rem);
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.rotator__item {
+  grid-area: 1 / 1;
+  align-self: center;
+  opacity: 0;
+  transform: translate3d(0, -0.45em, 0);
+  transition:
+    opacity var(--dur-slow) var(--ease-standard),
+    transform var(--dur-slow) var(--ease-standard);
+}
+
+.rotator__item.is-current {
+  opacity: 1;
+  transform: none;
+  animation: rotator-in 700ms var(--ease-out) backwards;
+}
+
+@keyframes rotator-in {
+  from { opacity: 0; transform: translate3d(0, 0.6em, 0); }
+}
+
+.lead {
+  margin-top: var(--space-5);
+  max-width: 58ch;
+  font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  text-wrap: pretty;
+}
+
+/* Tres datos en tarjetas iguales */
+.intro__facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  width: 100%;
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.intro__facts li {
+  display: grid;
+  gap: 0.125rem;
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.intro__facts strong {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-text);
+}
+
+.intro__facts span {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 40rem) {
+  .intro__facts { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+  .intro__facts li { padding-inline: var(--space-5); }
+}
+
+/* ---------- 5. Secciones ------------------------------------------------- */
+.section {
+  padding-block: var(--section-pad);
+  background: var(--color-bg);
+}
+
+/* Las secciones alternan el color de fondo: es el único separador entre ellas */
+.section--alt { background: var(--color-bg-alt); }
+
+/* Ritmo vertical entre hijos directos */
+.section .container > * + * { margin-top: var(--space-5); }
+.section .container > h2 + * { margin-top: var(--space-6); }
+.section .container > h3 { margin-top: var(--space-7); }
+.section .container > h3 + * { margin-top: var(--space-4); }
+
+.prose {
+  max-width: var(--measure);
+  font-size: var(--fs-lg);
+  line-height: 1.65;
+  color: var(--color-text-muted);
+  text-wrap: pretty;
+}
+
+.prose > p + p { margin-top: var(--space-4); }
+
+.pullquote {
+  position: relative;
+  max-width: 40rem;
+  margin-inline: 0;
+  padding: var(--space-2) 0 var(--space-2) var(--space-5);
+  font-family: var(--font-sans);
+  font-size: var(--fs-quote);
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--color-primary);
+  border-left: 4px solid var(--color-accent);
+  text-wrap: balance;
+}
+
+.section .container > .pullquote { margin-block: var(--space-7) 0; }
+
+/* Lista con verificación dibujada en CSS */
+.checklist {
+  display: grid;
+  gap: var(--space-3);
+  max-width: var(--measure);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.checklist li {
+  position: relative;
+  padding-left: 2.25rem;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+
+.checklist li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.05em;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 45%, transparent);
+}
+
+.checklist li::after {
+  content: "";
+  position: absolute;
+  left: 0.5625rem;
+  top: calc(0.05em + 0.3125rem);
+  width: 0.375rem;
+  height: 0.6875rem;
+  border: solid var(--color-primary);
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+
+/* Datos de la carrera */
+.facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.facts > div {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.facts dt {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+}
+
+.facts dd {
+  margin: 0;
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--color-text);
+}
+
+@media (min-width: 36rem) {
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+}
+
+@media (min-width: 56rem) {
+  .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* Dos columnas */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-7);
+  align-items: start;
+}
+
+.split > div > * + * { margin-top: var(--space-4); }
+.split > div > h3 + * { margin-top: var(--space-3); }
+.split > div > .btn { margin-top: var(--space-5); }
+.split > div > h2 + * { margin-top: var(--space-5); }
+
+@media (min-width: 48rem) {
+  .split {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(2rem, 1rem + 3vw, 4rem);
+  }
+
+  /* Título dentro de la columna izquierda y columnas centradas entre sí:
+     el texto y la tarjeta quedan equilibrados, sin huecos en las esquinas */
+  .split--centrado { align-items: center; }
+}
+
+/* Tarjeta de inscripción */
+.callout {
+  position: relative;
+  padding: var(--space-5) var(--space-5) var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.callout > * + * { margin-top: var(--space-4); }
+.callout > p { line-height: 1.6; color: var(--color-text-muted); }
+.callout > p:not(.small) { font-size: var(--fs-lg); }
+.callout .btn { width: 100%; margin-top: var(--space-5); }
+
+@media (min-width: 40rem) {
+  .callout { padding: var(--space-6); }
+}
+
+/* Aviso */
+.notice {
+  max-width: var(--measure);
+  padding: var(--space-3) var(--space-4);
+  line-height: 1.55;
+  color: var(--color-text);
+  background: var(--color-warning-soft);
+  border-left: 4px solid var(--color-warning);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.notice strong { color: var(--color-warning); }
+
+/* ---------- 6. Cronograma ------------------------------------------------ */
+.timeline {
+  --time-w: 4.75rem;     /* «07h00» del hito clave (--fs-lg) mide ≈ 72 px: deja holgura */
+  --rail-x: calc(var(--space-3) + var(--time-w) + 1.25rem);
+  max-width: 44rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.timeline li {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--time-w) minmax(0, 1fr);
+  column-gap: 2.75rem;
+  align-items: baseline;
+  padding: var(--space-3);
+  border-radius: var(--radius);
+}
+
+/* Línea conectora */
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--rail-x) - 1px);
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-border-strong);
+  opacity: 0.6;
+}
+
+.timeline li:first-child::before { top: 1.25rem; }
+.timeline li:last-child::before { bottom: auto; height: 1.25rem; }
+
+/* Hito */
+.timeline li::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--rail-x) - 6px);
+  top: calc(var(--space-3) + 0.4em);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 2px solid var(--color-primary);
+}
+
+.timeline time {
+  font-weight: 700;
+  white-space: nowrap;   /* la hora nunca se parte (p. ej. «07h0 / 0») */
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primary);
+}
+
+.timeline span { color: var(--color-text-muted); line-height: 1.5; }
+
+/* Hito clave: salida oficial 07h00 */
+.timeline li.is-key {
+  margin-block: var(--space-2);
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+.timeline li.is-key time { font-size: var(--fs-lg); }
+
+.timeline li.is-key span {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.timeline li.is-key::after {
+  left: calc(var(--rail-x) - 9px);
+  top: calc(var(--space-3) + 0.35em);
+  width: 18px;
+  height: 18px;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+/* Pulso suave del hito clave (3 veces, después de aparecer) */
+.timeline li.is-key > time::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--rail-x) - 9px);
+  top: calc(var(--space-3) + 0.35em);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .timeline li.is-key > time::before {
+    animation: key-ring 2.4s var(--ease-out) 3;
+    animation-delay: calc(var(--reveal-i, 4) * var(--stagger) + var(--dur-reveal));
+  }
+
+  .js .timeline:not(.is-visible) li.is-key > time::before { animation: none; }
+}
+
+@keyframes key-ring {
+  0%        { transform: scale(1); opacity: 0.7; }
+  75%, 100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* ---------- 7. Chips -------------------------------------------------------- */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  max-width: 56rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tags li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.5rem 0.875rem;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+}
+
+.tags li::before {
+  content: "";
+  flex: none;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+/* ---------- 8. Día de la carrera: mapa del recorrido + cronograma ---------
+   Escritorio (≥64rem): mapa | cronograma, lado a lado. Móvil: mapa arriba.
+   El mapa (Leaflet + OpenStreetMap) lo monta web/src/lib/mapa.ts. */
+.jornada {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6);
+  margin-top: var(--space-5);
+}
+
+.jornada__detalles { margin-top: var(--space-7); }
+.jornada__detalles > div > * + h3 { margin-top: var(--space-6); }
+
+@media (min-width: 64rem) {
+  .jornada {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--space-7);
+  }
+}
+
+.mapa { margin: 0; }
+
+.mapa__lienzo,
+.mapa__aviso {
+  height: clamp(22rem, 60vh, 32rem);
+  overflow: hidden;
+  background: var(--color-surface-deep);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.mapa__aviso {
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: var(--space-5);
+  text-align: center;
+  color: var(--color-text-subtle);
+}
+
+.mapa .leaflet-container {
+  font-family: var(--font-sans);
+  background: var(--color-surface-deep);
+}
+
+/* Mapa base claro de OpenStreetMap llevado al morado de la marca */
+.mapa .leaflet-tile-pane {
+  /* invertido → gris → teñido morado (sepia + giro de tono), oscuro para que destaque el trazado */
+  filter: invert(1) grayscale(1) sepia(0.85) hue-rotate(225deg) saturate(2.4) brightness(0.62) contrast(1.05);
+}
+
+/* Trazado: base punteada tenue + progreso amarillo (el color del CTA del arte) */
+.mapa .mapa__ruta-base {
+  fill: none;
+  stroke: var(--lila-texto);
+  stroke-width: 4;
+  stroke-opacity: 0.45;
+  stroke-dasharray: 1 9;
+  stroke-linecap: round;
+}
+
+.mapa .mapa__ruta {
+  fill: none;
+  stroke: var(--amarillo);
+  stroke-width: 6;
+  stroke-opacity: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Marcas (divIcon): sin el recuadro blanco por defecto de Leaflet */
+.mapa .leaflet-div-icon.mapa__marca {
+  background: transparent;
+  border: 0;
+}
+
+.mapa__marca span {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.45);
+}
+
+.mapa__marca--km span {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--blanco);
+  background: var(--morado-noche);
+  border: 2px solid var(--lila-texto);
+}
+
+.mapa__marca--agua span { box-shadow: 0 0 0 3px var(--color-info), 0 2px 6px rgb(0 0 0 / 0.45); }
+
+.mapa__marca--salida span,
+.mapa__marca--llegada span {
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-on-primary);
+  background: var(--amarillo);
+}
+
+.mapa__marca--llegada span { color: var(--blanco); background: var(--fucsia); }
+
+/* Corredora: punto blanco con halo fucsia */
+.mapa .leaflet-div-icon.mapa__corredora {
+  background: var(--blanco);
+  border: 3px solid var(--fucsia);
+  border-radius: 50%;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--fucsia) 35%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mapa .leaflet-div-icon.mapa__corredora { animation: corredora-halo 1.6s var(--ease-in-out) infinite; }
+
+  .mapa__marca { animation: marca-aparece 420ms var(--ease-spring) backwards; }
+}
+
+@keyframes corredora-halo {
+  50% { box-shadow: 0 0 0 11px color-mix(in srgb, var(--fucsia) 0%, transparent); }
+}
+
+@keyframes marca-aparece {
+  from { opacity: 0; scale: 0.4; }
+}
+
+/* Controles de Leaflet en la paleta oscura */
+.mapa .leaflet-bar a {
+  color: var(--color-text);
+  background: var(--morado-superficie);
+  border-color: var(--color-border);
+}
+
+.mapa .leaflet-bar a:hover { background: var(--morado-superficie-2); }
+.mapa .leaflet-bar a.leaflet-disabled { color: var(--color-text-subtle); background: var(--morado-profundo); }
+
+.mapa .leaflet-control-attribution {
+  font-size: 0.6875rem;
+  color: var(--color-text-subtle);
+  background: color-mix(in srgb, var(--morado-profundo) 85%, transparent);
+}
+
+.mapa .leaflet-control-attribution a { color: var(--color-text-muted); }
+
+/* Leyenda */
+.mapa__leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+.mapa__leyenda-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mapa__leyenda-item::before {
+  content: "";
+  flex: none;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 50%;
+}
+
+.mapa__leyenda-item--salida::before { background: linear-gradient(90deg, var(--amarillo) 50%, var(--fucsia) 50%); }
+.mapa__leyenda-item--km::before { background: var(--morado-noche); border: 2px solid var(--lila-texto); }
+.mapa__leyenda-item--agua::before { background: var(--morado-noche); border: 2px solid var(--lila-texto); box-shadow: 0 0 0 2px var(--color-info); }
+
+/* El cronograma junto al mapa: sin ancho máximo propio */
+.jornada .timeline { max-width: none; }
+
+/* ---------- 9. Banda final ----------------------------------------------- */
+.cta-final {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: var(--section-pad);
+  text-align: center;
+  color: var(--color-text);
+  background: linear-gradient(180deg, var(--color-bg-alt), var(--color-surface-deep));
+}
+
+/* La trama de puntos del arte, invertida (sube desde abajo) */
+.cta-final::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: auto 0 0 0;
+  height: var(--trama-movil-h);
+  background-image: var(--trama-movil);
+  background-repeat: repeat-x;
+  background-size: var(--trama-w) var(--trama-movil-h);
+  transform: scaleY(-1);
+  pointer-events: none;
+}
+
+.cta-final .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.cta-final h2 {
+  font-size: clamp(2.25rem, 1.4rem + 4vw, 4rem);
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.cta-final p {
+  max-width: 48ch;
+  font-size: var(--fs-lg);
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+
+.cta-final .btn {
+  width: 100%;
+  max-width: 22rem;
+  margin-top: var(--space-3);
+}
+
+.cta-final .small { font-size: var(--fs-sm); color: var(--color-text-muted); }
+
+/* ---------- 10. Movimiento reducido -------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .topbar.is-scrolled,
+  .topbar.is-scrolled .topbar__inner,
+  .topbar.is-scrolled .brand__mark,
+  .rotator__item { transform: none; }
+}
+
+/* ---------- 11. Alto contraste forzado ----------------------------------- */
+@media (forced-colors: active) {
+  .hero__trama,
+  .cta-final::before { display: none; }
+  .fecha time,
+  .intro__facts li,
+  .hero__vivo,
+  .facts > div,
+  .callout,
+  .tags li,
+  .mapa__lienzo { border: 1px solid CanvasText; }
+  .topbar nav a::after { forced-color-adjust: none; background: Highlight; }
+  .checklist li::before,
+  .checklist li::after,
+  .timeline li::after { border-color: CanvasText; }
+}
+
+/* ---------- 12. Impresión ------------------------------------------------ */
+@media print {
+  .topbar,
+  .hero__trama,
+  .hero__acciones,
+  .hero__vivo,
+  .cta-final .btn,
+  .mapa__corredora { display: none !important; }
+  .hero { background: var(--morado-noche) !important; color: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .hero__inner { min-height: 0; padding-block: 12pt; }
+  .cta-final { background: none !important; color: var(--color-text) !important; border: 1px solid var(--color-border); }
+  .cta-final h2, .cta-final p, .rotator, .lead, .intro__facts strong, .intro__facts span { color: var(--color-text) !important; }
+  .cta-final::before { display: none; }
+  .rotator__item:not(:first-child) { display: none; }
+  .rotator__item { opacity: 1 !important; transform: none !important; }
+  .section { padding-block: 12pt; }
+}

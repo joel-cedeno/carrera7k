@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mi boleto · Carrera Atlética 7K</title>
+  <meta name="description" content="Recupera tu boleto de inscripción con código QR – Carrera Atlética 7K." />
+  <meta name="theme-color" content="#290055" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/form.css" />
+  <link rel="stylesheet" href="css/boletos.css" />
+  <script type="module" src="dist/boleto.js"></script>
+</head>
+<body class="form-page boletos-page">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <header class="site-header site-header--compacto">
+    <div class="container">
+      <p class="back"><a href="index.html">← Volver a la información de la carrera</a></p>
+      <div class="site-header__inner">
+        <img class="site-header__logo" src="assets/marca/logo-7k-unete.svg" alt="" width="215" height="160" />
+        <div class="site-header__texto">
+          <p class="eyebrow">Carrera Atlética 7K</p>
+          <h1>Mi boleto</h1>
+          <p class="tagline">Recupera tu boleto de inscripción con código QR</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido" class="container">
+    <form class="card" data-recuperar novalidate aria-labelledby="recuperar-titulo">
+      <h2 id="recuperar-titulo">Ingresa los datos de tu inscripción</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="documento">Cédula / pasaporte</label>
+          <input id="documento" name="documento" type="text" autocomplete="off" maxlength="20" required />
+        </div>
+        <div class="field">
+          <label for="fechaNacimiento">Fecha de nacimiento</label>
+          <input id="fechaNacimiento" name="fechaNacimiento" type="date" autocomplete="bday" required />
+        </div>
+      </div>
+      <p class="form-alert" role="alert" data-recuperar-error hidden></p>
+      <div class="actions">
+        <button type="submit" class="btn btn--cta" data-recuperar-enviar>
+          <span class="btn__label">Ver mi boleto</span>
+          <span class="btn__spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+      <p class="hint">¿Aún no te inscribes? <a href="inscripcion.html">Ir a la ficha de inscripción</a>.</p>
+    </form>
+
+    <section class="card boleto-tarjeta" data-boleto hidden tabindex="-1" aria-labelledby="boleto-titulo">
+      <h2 id="boleto-titulo">Tu boleto de inscripción</h2>
+      <div class="boleto">
+        <svg class="boleto__qr" data-boleto-qr role="img" xmlns="http://www.w3.org/2000/svg"></svg>
+        <p class="boleto__nombre" data-boleto-nombre></p>
+        <p class="boleto__codigo" data-boleto-codigo></p>
+        <p class="boleto__indicacion">Domingo 15 de noviembre de 2026 · 7h00. Presenta este boleto y tu cédula de identidad.</p>
+      </div>
+      <div class="actions actions--centro">
+        <button type="button" class="btn btn--cta" data-boleto-descargar><span class="btn__label">Descargar boleto (imagen)</span></button>
+        <button type="button" class="btn btn--ghost" data-imprimir>Imprimir</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Ministerio de Gobierno · Subsecretaría de Prevención y Erradicación de la Violencia · D.M. de Quito, octubre de 2026.</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inscripción · Carrera Atlética 7K</title>
+  <meta name="description" content="Ficha de inscripción de participantes – Carrera Atlética 7K, Únete contra la violencia a la mujer." />
+  <meta name="theme-color" content="#290055" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/form.css" />
+  <link rel="stylesheet" href="css/boletos.css" />
+  <script type="module" src="dist/inscripcion.js"></script>
+</head>
+<body class="form-page">
+  <a class="skip-link" href="#contenido">Saltar al formulario</a>
+
+  <header class="site-header">
+    <div class="container">
+      <p class="back"><a href="index.html">← Volver a la información de la carrera</a></p>
+      <div class="site-header__inner">
+        <img class="site-header__logo" src="assets/marca/logo-7k-unete.svg" alt="" width="215" height="160" />
+        <div class="site-header__texto">
+          <p class="eyebrow">Ministerio de Gobierno · Gobierno del Ecuador</p>
+          <h1>Carrera Atlética 7K</h1>
+          <p class="tagline">Únete contra la violencia a la mujer</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido" class="container">
+    <section class="event-info" aria-labelledby="info-title">
+      <h2 id="info-title" class="visually-hidden">Resumen del evento</h2>
+      <dl class="event-info__datos">
+        <div><dt>Fecha</dt><dd>Domingo, 15 de noviembre de 2026</dd></div>
+        <div><dt>Salida</dt><dd>7h00 · Av. Río Amazonas y Jorge Washington</dd></div>
+        <div><dt>Distancia</dt><dd>7 km · Inscripción gratuita</dd></div>
+      </dl>
+
+      <div class="cupos cupos--form" data-cupos data-estado="cargando">
+        <p class="cupos__estado"><span class="live-dot" aria-hidden="true"></span><span data-cupos-estado>Conectando…</span></p>
+        <p class="cupos__cifra">
+          <span class="cupos__numero" data-cupos-disponibles>—</span>
+          <span class="cupos__de">cupos disponibles de <span data-cupos-total>2.000</span></span>
+        </p>
+        <div class="cupos__barra" role="progressbar" aria-label="Cupos ocupados" aria-valuemin="0" aria-valuemax="2000" aria-valuenow="0" data-cupos-barra>
+          <span class="cupos__relleno"></span>
+        </div>
+        <p class="cupos__plazo" data-cupos-plazo hidden></p>
+        <p class="visually-hidden" aria-live="polite" data-cupos-anuncio></p>
+      </div>
+    </section>
+
+    <section class="card form-closed" data-form-cerrado hidden aria-labelledby="cerrado-title" tabindex="-1">
+      <h2 id="cerrado-title" data-cerrado-titulo>Inscripciones no disponibles</h2>
+      <p data-cerrado-texto></p>
+      <a class="btn btn--ghost" href="index.html">Ver información de la carrera</a>
+      <p class="hint">¿Ya te inscribiste? <a href="boleto.html">Recupera tu boleto</a>.</p>
+    </section>
+
+    <form id="inscripcion-form" class="card" novalidate aria-labelledby="form-title" data-form>
+      <h2 id="form-title">Ficha de inscripción de participantes</h2>
+
+      <ol class="form-progress" data-form-progress aria-label="Progreso de la ficha">
+        <li data-step="1"><span class="form-progress__dot" aria-hidden="true"></span>Datos personales</li>
+        <li data-step="2"><span class="form-progress__dot" aria-hidden="true"></span>Emergencia</li>
+        <li data-step="3"><span class="form-progress__dot" aria-hidden="true"></span>Declaración</li>
+      </ol>
+
+      <div class="field field--inline">
+        <label for="fechaInscripcion">Fecha de inscripción</label>
+        <input id="fechaInscripcion" name="fechaInscripcion" type="text" readonly />
+      </div>
+
+      <fieldset data-step="1">
+        <legend><span class="step" aria-hidden="true">1</span> Datos de la persona participante</legend>
+
+        <div class="grid">
+          <div class="field">
+            <label for="nombres">Nombres completos <span class="req" aria-hidden="true">*</span></label>
+            <input id="nombres" name="nombres" type="text" autocomplete="given-name" maxlength="120" required />
+            <p class="error" id="nombres-error"></p>
+          </div>
+
+          <div class="field">
+            <label for="apellidos">Apellidos completos <span class="req" aria-hidden="true">*</span></label>
+            <input id="apellidos" name="apellidos" type="text" autocomplete="family-name" maxlength="120" required />
+            <p class="error" id="apellidos-error"></p>
+          </div>
+
+          <div class="field">
+            <label for="documento">Cédula / pasaporte <span class="req" aria-hidden="true">*</span></label>
+            <input id="documento" name="documento" type="text" autocomplete="off" maxlength="20" required />
+            <p class="error" id="documento-error"></p>
+          </div>
+
+          <div class="field">
+            <label for="fechaNacimiento">Fecha de nacimiento <span class="req" aria-hidden="true">*</span></label>
+            <input id="fechaNacimiento" name="fechaNacimiento" type="date" autocomplete="bday" required />
+            <p class="error" id="fechaNacimiento-error"></p>
+          </div>
+
+          <div class="field">
+            <label for="edad">Edad</label>
+            <input id="edad" name="edad" type="text" readonly placeholder="Se calcula automáticamente" />
+            <p class="hint" data-edad-hint>Edad sugerida: de 13 a 69 años.</p>
+            <p class="aviso-edad" data-edad-aviso role="status" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="genero">Género <span class="opt">(opcional)</span></label>
+            <input id="genero" name="genero" type="text" maxlength="120" />
+          </div>
+
+          <div class="field">
+            <label for="telefono">Teléfono de contacto <span class="req" aria-hidden="true">*</span></label>
+            <input id="telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" required />
+            <p class="error" id="telefono-error"></p>
+          </div>
+
+          <div class="field">
+            <label for="correo">Correo <span class="req" aria-hidden="true">*</span></label>
+            <input id="correo" name="correo" type="email" autocomplete="email" maxlength="120" required />
+            <p class="error" id="correo-error"></p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset data-step="2">
+        <legend><span class="step" aria-hidden="true">2</span> Contacto en caso de emergencia</legend>
+
+        <div class="grid">
+          <div class="field field--full">
+            <label for="emergNombre">Nombre completo <span class="req" aria-hidden="true">*</span></label>
+            <input id="emergNombre" name="emergNombre" type="text" autocomplete="off" maxlength="120" required />
+            <p class="error" id="emergNombre-error"></p>
+          </div>
+
+          <div class="field">
+            <label for="emergParentesco">Parentesco / relación <span class="req" aria-hidden="true">*</span></label>
+            <input id="emergParentesco" name="emergParentesco" type="text" autocomplete="off" maxlength="120" required />
+            <p class="error" id="emergParentesco-error"></p>
+          </div>
+
+          <div class="field">
+            <label for="emergTelefono">Teléfono <span class="req" aria-hidden="true">*</span></label>
+            <input id="emergTelefono" name="emergTelefono" type="tel" inputmode="tel" autocomplete="off" maxlength="20" required />
+            <p class="error" id="emergTelefono-error"></p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset data-step="3">
+        <legend><span class="step" aria-hidden="true">3</span> Declaración y autorización</legend>
+
+        <p class="declaration">
+          Declaro que los datos proporcionados son correctos y que participo voluntariamente en el evento.
+          Autorizo el tratamiento de mis datos personales exclusivamente para la gestión de la inscripción,
+          organización, seguridad y comunicación relacionada con la carrera, conforme a la normativa aplicable.
+          He sido informado/a de los canales para ejercer mis derechos sobre mis datos personales.
+        </p>
+
+        <div class="check">
+          <input id="aceptaDeclaracion" name="aceptaDeclaracion" type="checkbox" required />
+          <label for="aceptaDeclaracion">Acepto la declaración y autorización anterior <span class="req" aria-hidden="true">*</span></label>
+        </div>
+        <p class="error" id="aceptaDeclaracion-error"></p>
+
+        <div class="check">
+          <input id="autorizaFotos" name="autorizaFotos" type="checkbox" />
+          <label for="autorizaFotos">Autorizo el uso de fotografías o videos de mi participación para difusión institucional <span class="opt">(opcional)</span></label>
+        </div>
+      </fieldset>
+
+      <div class="form-alert" data-form-alert role="alert" hidden></div>
+
+      <div class="actions">
+        <button type="submit" class="btn btn--cta" data-submit>
+          <span class="btn__label">Inscribirme</span>
+          <span class="btn__spinner" aria-hidden="true"></span>
+        </button>
+        <button type="reset" class="btn btn--ghost">Limpiar</button>
+      </div>
+      <p class="hint">Los campos con <span class="req" aria-hidden="true">*</span> son obligatorios.</p>
+      <p class="hint">¿Ya te inscribiste? <a href="boleto.html">Recupera tu boleto</a>.</p>
+    </form>
+
+    <section id="confirmacion" class="card confirmation" hidden tabindex="-1" aria-labelledby="confirmacion-title">
+      <svg class="check-anim" viewBox="0 0 52 52" aria-hidden="true" focusable="false">
+        <circle class="check-anim__circle" cx="26" cy="26" r="24" fill="none" />
+        <path class="check-anim__mark" fill="none" d="M14 27l8 8 16-17" />
+      </svg>
+      <h2 id="confirmacion-title">¡Inscripción registrada!</h2>
+      <p class="codigo">Tu código de inscripción: <strong data-codigo></strong></p>
+
+      <div class="boleto" data-boleto>
+        <svg class="boleto__qr" data-boleto-qr role="img" xmlns="http://www.w3.org/2000/svg"></svg>
+        <p class="boleto__nombre" data-boleto-nombre></p>
+        <p class="boleto__indicacion">Este es tu boleto de inscripción. Guárdalo y preséntalo con tu cédula de identidad.</p>
+        <button type="button" class="btn btn--cta" data-boleto-descargar><span class="btn__label">Descargar boleto (imagen)</span></button>
+        <p class="hint">Si lo pierdes, puedes recuperarlo en <a href="boleto.html">Mi boleto</a>.</p>
+      </div>
+
+      <p>Resumen de tu ficha:</p>
+      <dl id="resumen"></dl>
+      <p class="note">
+        Recuerda retirar tu kit el sábado 14 de noviembre de 2026, de 10h00 a 15h00, presentando tu cédula de identidad.
+        El lugar se comunicará oportunamente por los canales oficiales.
+      </p>
+      <div class="actions">
+        <button type="button" class="btn btn--ghost" data-imprimir>Imprimir comprobante</button>
+        <button type="button" id="nueva-inscripcion" class="btn btn--primary">Nueva inscripción</button>
+        <a class="btn btn--ghost" href="index.html">Volver al inicio</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Ministerio de Gobierno · Subsecretaría de Prevención y Erradicación de la Violencia · D.M. de Quito, octubre de 2026.</p>
+    </div>
+  </footer>
+</body>
+</html>

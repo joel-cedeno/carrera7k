@@ -1,0 +1,875 @@
+/* ==========================================================================
+   form.css · ficha de inscripción (body.form-page)
+   Se carga después de tokens.css y base.css. Solo consume variables.
+   Tema oscuro de marca: cabecera con la trama de puntos y el logo,
+   tarjetas moradas y campos hundidos con texto blanco.
+   ========================================================================== */
+
+/* ---------- 1. Cabecera -------------------------------------------------- */
+.site-header {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--color-text);
+  background: var(--color-bg);
+  padding-block: var(--space-5) calc(var(--space-6) + var(--space-3));
+}
+
+/* Trama de puntos del arte */
+.site-header::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -0.75rem -1.5rem auto -1.5rem;
+  height: var(--trama-movil-h);
+  background-image: var(--trama-movil);
+  background-repeat: repeat-x;
+  background-size: var(--trama-w) var(--trama-movil-h);
+  background-position: center top;
+  pointer-events: none;
+}
+
+/* Línea inferior: el degradado de la K */
+.site-header::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 5px;
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--k-1), var(--k-2), var(--amarillo));
+}
+
+.site-header__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.site-header__logo {
+  width: clamp(7rem, 32vw, 10rem);
+  height: auto;
+}
+
+.site-header h1 {
+  font-family: var(--font-sans);
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.site-header .eyebrow { margin-bottom: var(--space-2); }
+
+.back { margin-bottom: var(--space-4); }
+
+.back a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-text);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-text) 50%, transparent);
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--dur) var(--ease-standard);
+}
+
+.back a:hover { text-decoration-color: var(--color-primary); text-decoration-thickness: 2px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .site-header .container > *,
+  .site-header__inner > * {
+    animation: fade-up var(--dur-reveal) var(--ease-out) backwards;
+    animation-delay: calc(var(--i, 0) * var(--stagger));
+  }
+  .site-header__logo { --i: 1; }
+  .site-header__texto { --i: 2; }
+  .site-header::before { animation: fade-in 1.4s var(--ease-out) backwards; }
+  .site-header::after { animation: header-stripe-in 1.2s var(--ease-in-out) 0.3s backwards; }
+}
+
+@keyframes header-stripe-in { from { transform: scaleX(0); } }
+
+/* ---------- 2. Datos del evento ------------------------------------------ */
+.event-info {
+  position: relative;
+  margin-top: calc(var(--space-5) * -1);
+  padding: var(--space-5) var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.event-info__datos {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0;
+}
+
+.event-info__datos > div {
+  display: grid;
+  gap: 0.125rem;
+  padding-block: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.event-info__datos > div:first-child { border-top: 0; padding-top: 0; }
+
+.event-info__datos dt {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+}
+
+.event-info__datos dd {
+  margin: 0;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.note {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  background: var(--color-warning-soft);
+  border-left: 4px solid var(--color-warning);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* ---------- 3. Tarjetas y estructura del formulario ---------------------- */
+.card {
+  margin-block: var(--space-5);
+  padding: var(--space-5) var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.card:focus { outline: none; }
+.card:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+
+form.card > h2,
+.form-closed h2,
+.confirmation h2 {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--color-text);
+}
+
+form.card > h2 { margin-bottom: var(--space-4); }
+
+fieldset {
+  min-width: 0;
+  margin: var(--space-5) 0 0;
+  padding: var(--space-5) 0 0;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+}
+
+legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  float: left;            /* padding/margen predecibles bajo el borde */
+  width: 100%;
+  margin-bottom: var(--space-4);
+  padding: 0;
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+legend + * { clear: both; }
+
+.step {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-display);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-surface), 0 0 0 5px var(--color-accent);
+}
+
+/* ---------- 4. Progreso de la ficha (3 pasos) ---------------------------- */
+/* --form-progress (0–1) en el <ol>; li.is-current / li.is-complete. */
+.form-progress {
+  --form-progress: 0;
+  --fp-dot: 1.75rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 0 var(--space-5);
+  padding: 0;
+  list-style: none;
+  counter-reset: paso;
+}
+
+.form-progress::before,
+.form-progress::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--fp-dot) / 2 - 2px);
+  left: calc(100% / 6);
+  right: calc(100% / 6);
+  height: 4px;
+  border-radius: var(--radius-pill);
+}
+
+.form-progress::before { background: var(--color-track); }
+
+.form-progress::after {
+  background: linear-gradient(90deg, var(--k-1), var(--k-2), var(--color-primary));
+  transform: scaleX(clamp(0, var(--form-progress), 1));
+  transform-origin: left center;
+  transition: transform var(--dur-progress) var(--ease-out);
+}
+
+.form-progress li {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-1);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--color-text-subtle);
+  counter-increment: paso;
+  transition: color var(--dur-slow) var(--ease-standard);
+}
+
+.form-progress__dot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--fp-dot);
+  height: var(--fp-dot);
+  border-radius: 50%;
+  background: var(--color-surface-deep);
+  border: 2px solid var(--color-border-strong);
+  transition:
+    background-color var(--dur-slow) var(--ease-standard),
+    border-color var(--dur-slow) var(--ease-standard),
+    box-shadow var(--dur-slow) var(--ease-standard);
+}
+
+/* Número del paso */
+.form-progress__dot::before {
+  content: counter(paso);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-subtle);
+  transition: opacity var(--dur) var(--ease-standard), transform var(--dur) var(--ease-standard);
+}
+
+/* Visto (se dibuja con un leve rebote al completar) */
+.form-progress__dot::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.375rem;
+  height: 0.6875rem;
+  margin: -0.4375rem 0 0 -0.1875rem;
+  border: solid var(--color-on-primary);
+  border-width: 0 2.5px 2.5px 0;
+  opacity: 0;
+  transform: rotate(45deg) scale(0);
+  transition:
+    transform var(--dur-slow) var(--ease-spring),
+    opacity var(--dur-fast) var(--ease-standard);
+}
+
+.form-progress li.is-current { color: var(--color-primary); }
+
+.form-progress li.is-current .form-progress__dot {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-focus-halo);
+}
+
+.form-progress li.is-current .form-progress__dot::before { color: var(--color-primary); }
+
+.form-progress li.is-complete { color: var(--color-text); }
+
+.form-progress li.is-complete .form-progress__dot {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.form-progress li.is-complete .form-progress__dot::before {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.form-progress li.is-complete .form-progress__dot::after {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
+}
+
+/* ---------- 5. Rejilla y campos ------------------------------------------ */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.field--full { grid-column: 1 / -1; }
+
+.field--inline {
+  padding: var(--space-3);
+  background: var(--color-surface-muted);
+  border-radius: var(--radius);
+}
+
+label {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.req {
+  margin-left: 0.125rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.opt {
+  font-weight: 400;
+  color: var(--color-text-subtle);
+}
+
+.hint {
+  font-size: var(--fs-xs);
+  color: var(--color-text-subtle);
+}
+
+/* Edad fuera del rango sugerido: aviso ámbar, informativo (no impide inscribirse) */
+.aviso-edad {
+  margin-top: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--color-text);
+  background: var(--color-warning-soft);
+  border-left: 3px solid var(--color-warning);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.aviso-edad[hidden] { display: none; }
+
+form.card > .hint {
+  margin-top: var(--space-3);
+  text-align: center;
+}
+
+input:not([type="checkbox"]):not([type="radio"]) {
+  width: 100%;
+  min-height: var(--control-h);
+  padding: 0.625rem 0.875rem;
+  font: inherit;
+  font-size: var(--fs-md);   /* 16px: evita el zoom en iOS */
+  line-height: 1.4;
+  color: var(--color-text);
+  color-scheme: dark;
+  background-color: var(--color-surface-deep);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  appearance: none;
+  -webkit-appearance: none;
+  transition:
+    border-color var(--dur) var(--ease-standard),
+    box-shadow var(--dur) var(--ease-standard),
+    background-color var(--dur) var(--ease-standard);
+}
+
+input::placeholder { color: var(--color-text-subtle); opacity: 1; }
+
+input:not([type="checkbox"]):not([readonly]):hover { border-color: var(--color-text); }
+
+input:not([type="checkbox"]):focus-visible,
+input:not([type="checkbox"]):focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 5px var(--color-focus-halo);
+}
+
+input[type="date"]::-webkit-date-and-time-value { text-align: left; }
+input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.8; filter: invert(1); }
+
+/* Solo lectura: plano, borde punteado y trama suave */
+input[readonly]:not([type="checkbox"]) {
+  cursor: default;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  background-color: var(--color-readonly-bg);
+  background-image: repeating-linear-gradient(135deg,
+    transparent 0 8px,
+    var(--color-readonly-stripe) 8px 16px);
+  border-style: dashed;
+  box-shadow: none;
+}
+
+input[readonly]:focus { box-shadow: 0 0 0 4px var(--color-focus-halo); }
+
+/* Error (selector con la misma especificidad que el base, declarado después) */
+.field > input.invalid,
+.field > input[aria-invalid="true"] {
+  border-color: var(--color-danger) !important;
+  border-width: 2px;
+  padding-inline: calc(0.875rem - 1px);
+  background-color: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface-deep));
+}
+
+input.invalid:focus,
+input[aria-invalid="true"]:focus {
+  outline-color: var(--color-danger);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-danger) 22%, transparent);
+}
+
+/* Sacudida breve, una vez, cuando el campo pasa a error */
+.field.has-error > input,
+.check.has-error {
+  animation: field-shake 420ms var(--ease-standard);
+}
+
+@keyframes field-shake {
+  0%, 100% { transform: none; }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-danger);
+}
+
+.error:empty { display: none; }
+
+/* Icono "!" en círculo (no depende solo del color) */
+.error::before {
+  content: "!";
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-top: 0.1rem;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-bg);
+  background: var(--color-danger);
+}
+
+.error:not(:empty) { animation: slide-down var(--dur) var(--ease-out); }
+
+/* ---------- 6. Declaración y casillas ------------------------------------ */
+.declaration {
+  margin-bottom: var(--space-4);
+  padding: var(--space-4);
+  font-size: var(--fs-sm);
+  line-height: 1.65;
+  color: var(--color-text-muted);
+  background: var(--color-surface-deep);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.check {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  background: var(--color-surface-deep);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  transition:
+    border-color var(--dur) var(--ease-standard),
+    background-color var(--dur) var(--ease-standard);
+}
+
+.check:hover { border-color: var(--color-text); }
+
+.check:has(input:checked) {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface-deep));
+}
+
+.check:has(input.invalid),
+.check:has(input[aria-invalid="true"]) {
+  border: 2px solid var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface-deep));
+}
+
+.check input[type="checkbox"] {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  width: 1.375rem;
+  height: 1.375rem;
+  margin: 0.875rem 0 0.875rem 0.875rem;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.check input[type="checkbox"]:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+/* La etiqueta ocupa toda la caja: área táctil amplia */
+.check label {
+  flex: 1;
+  min-height: 2.75rem;
+  padding: 0.75rem 0.875rem 0.75rem 0;
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  line-height: 1.45;
+  cursor: pointer;
+}
+
+.check label::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.check + .error { margin-top: var(--space-2); }
+
+/* ---------- 7. Acciones y avisos ----------------------------------------- */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Error del servidor */
+.form-alert {
+  position: relative;
+  margin-top: var(--space-5);
+  padding: var(--space-3) var(--space-4) var(--space-3) calc(var(--space-4) + 1.75rem);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-danger-soft);
+  border: 1px solid color-mix(in srgb, var(--color-danger) 45%, transparent);
+  border-left: 4px solid var(--color-danger);
+  border-radius: var(--radius-sm);
+  animation: slide-down var(--dur-slow) var(--ease-out);
+}
+
+.form-alert::before {
+  content: "!";
+  position: absolute;
+  left: var(--space-4);
+  top: calc(var(--space-3) + 0.1rem);
+  display: grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-bg);
+  background: var(--color-danger);
+}
+
+/* Inscripciones no disponibles */
+.form-closed {
+  animation: fade-up var(--dur-slow) var(--ease-out);
+}
+
+.form-closed > * + * { margin-top: var(--space-3); }
+.form-closed p { color: var(--color-text-muted); }
+.form-closed p:empty { display: none; }
+.form-closed .btn { margin-top: var(--space-5); }
+
+/* ---------- 8. Confirmación ---------------------------------------------- */
+.confirmation {
+  position: relative;
+  overflow: hidden;
+}
+
+.confirmation:not([hidden]) { animation: fade-up 500ms var(--ease-out); }
+
+.confirmation h2 {
+  text-align: center;
+  color: var(--color-success);
+}
+
+.check-anim {
+  display: block;
+  width: 4.5rem;
+  height: 4.5rem;
+  margin: 0 auto var(--space-4);
+  overflow: visible;
+}
+
+.check-anim__circle {
+  fill: var(--color-success-soft);
+  stroke: var(--color-success);
+  stroke-width: 3;
+  stroke-dasharray: 151;   /* 2π·24 */
+  stroke-dashoffset: 0;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.check-anim__mark {
+  stroke: var(--color-success);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 36;    /* longitud del trazo ≈ 34.7 */
+  stroke-dashoffset: 0;
+}
+
+.confirmation:not([hidden]) .check-anim__circle {
+  animation:
+    check-circle 700ms var(--ease-in-out) 200ms backwards,
+    check-fill 400ms var(--ease-standard) 700ms backwards;
+}
+
+.confirmation:not([hidden]) .check-anim__mark {
+  animation: check-mark 420ms var(--ease-out) 850ms backwards;
+}
+
+@keyframes check-circle { from { stroke-dashoffset: 151; } }
+@keyframes check-fill   { from { fill-opacity: 0; } }
+@keyframes check-mark   { from { stroke-dashoffset: 36; } }
+
+.confirmation > p:not(.note) {
+  margin-top: var(--space-4);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+/* Código de inscripción */
+.confirmation > .codigo { text-align: center; }
+
+.codigo strong {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: var(--space-2) auto 0;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-display);
+  font-size: clamp(1.625rem, 1.2rem + 2vw, 2.375rem);
+  font-weight: var(--fw-display);
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums slashed-zero;
+  overflow-wrap: anywhere;
+  color: var(--color-primary);
+  background: var(--color-surface-deep);
+  border: 2px dashed color-mix(in srgb, var(--color-primary) 55%, transparent);
+  border-radius: var(--radius);
+}
+
+.confirmation:not([hidden]) .codigo strong {
+  animation: codigo-in 600ms var(--ease-spring) 1.05s backwards;
+}
+
+@keyframes codigo-in {
+  from { opacity: 0; transform: scale(0.94); }
+}
+
+.confirmation dl {
+  margin: var(--space-3) 0 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.confirmation dl > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.125rem;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.confirmation dl > div:first-child { border-top: 0; }
+.confirmation dl > div:nth-child(even) { background: var(--color-surface-muted); }
+
+.confirmation dt {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+}
+
+.confirmation dd {
+  margin: 0;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+
+.confirmation .actions .btn { width: 100%; }
+
+/* ---------- 9. Pie ------------------------------------------------------- */
+.form-page .site-footer { margin-top: var(--space-6); }
+
+/* ---------- 10. Pantallas medianas y grandes ----------------------------- */
+@media (min-width: 40rem) {
+  .site-header { padding-block: var(--space-6) calc(var(--space-7) + var(--space-3)); }
+
+  .site-header__inner {
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--space-6);
+  }
+
+  .event-info,
+  .card { padding: var(--space-6); }
+
+  .event-info__datos {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--space-5);
+  }
+
+  .event-info__datos > div { border-top: 0; padding-block: 0; }
+
+  .form-progress li { font-size: var(--fs-sm); }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-5);
+    row-gap: var(--space-4);
+  }
+
+  .field--inline {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .field--inline input:not([type="checkbox"]) { width: auto; min-width: 13rem; }
+
+  .actions {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .actions .btn { min-width: 10rem; }
+
+  form.card > .hint { text-align: right; }
+
+  .confirmation dl > div {
+    grid-template-columns: minmax(10rem, 1fr) 2fr;
+    gap: var(--space-4);
+    align-items: baseline;
+  }
+
+  .confirmation .actions .btn { width: auto; }
+}
+
+/* ---------- 11. Movimiento reducido: lo resuelve base.css (sin animaciones
+   ni transiciones de transform; los estados finales son los estilos base). */
+
+/* ---------- 12. Alto contraste forzado ----------------------------------- */
+@media (forced-colors: active) {
+  .step { border: 1px solid CanvasText; }
+  input.invalid,
+  input[aria-invalid="true"] { border-color: Mark !important; }
+  .site-header::before,
+  .site-header::after { display: none; }
+  .form-progress::before { forced-color-adjust: none; background: GrayText; }
+  .form-progress::after { forced-color-adjust: none; background: Highlight; }
+  .form-progress__dot { border-color: CanvasText; }
+  .form-progress li.is-complete .form-progress__dot { forced-color-adjust: none; background: Highlight; border-color: Highlight; }
+  .form-progress li.is-complete .form-progress__dot::after { border-color: HighlightText; }
+  .form-alert,
+  .codigo strong { border: 2px solid CanvasText; }
+  .check-anim__circle,
+  .check-anim__mark { stroke: CanvasText; }
+}
+
+/* ---------- 13. Impresión: solo cabecera + comprobante ------------------- */
+@media print {
+  .back,
+  .event-info,
+  form.card,
+  .form-closed,
+  .site-footer,
+  .site-header__logo,
+  .confirmation .actions,
+  .btn { display: none !important; }
+
+  .site-header {
+    background: none;
+    color: var(--color-text);
+    padding: 0 0 8pt;
+    border-bottom: 2pt solid var(--color-primary);
+  }
+
+  .site-header::before,
+  .site-header::after { display: none; }
+  .site-header__inner { grid-template-columns: minmax(0, 1fr); }
+  .eyebrow,
+  .tagline { color: var(--color-primary); }
+
+  .card,
+  .confirmation {
+    margin: 12pt 0;
+    padding: 12pt;
+    box-shadow: none;
+    border: 1px solid var(--color-border);
+    border-top: 3pt solid var(--color-text);
+    animation: none !important;
+  }
+
+  .check-anim { width: 2.5rem; height: 2.5rem; margin-bottom: 6pt; }
+  .check-anim * { animation: none !important; }
+  .confirmation h2 { color: var(--color-text); }
+  .codigo strong { animation: none !important; color: var(--color-text); border-color: var(--color-text); background: none; }
+  .confirmation dl > div { break-inside: avoid; }
+  .confirmation dl > div:nth-child(even) { background: var(--color-surface-muted); }
+  .note { background: none; border-left-color: var(--color-text); }
+}

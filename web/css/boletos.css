@@ -1,0 +1,411 @@
+/* ==========================================================================
+   boletos.css · boleto con QR (confirmación y «Mi boleto») y lector de
+   boletos para moderadores (verificar.html).
+   Se carga después de form.css. Solo consume variables de tokens.css.
+   ========================================================================== */
+
+.boletos-page [hidden] { display: none !important; }
+
+/* Cabecera más baja: son páginas de trabajo, no de presentación */
+.site-header--compacto { padding-block: var(--space-4) var(--space-5); }
+.site-header--compacto .site-header__logo { width: clamp(5rem, 22vw, 7rem); }
+
+.actions--centro { justify-content: center; }
+
+/* ---------- 1. Boleto ---------------------------------------------------- */
+.boleto {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding: var(--space-5) var(--space-4);
+  text-align: center;
+  background: var(--color-surface-deep);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.boleto__qr {
+  display: block;
+  width: min(100%, 17rem);
+  height: auto;
+  aspect-ratio: 1;
+  padding: var(--space-2);
+  background: var(--blanco);   /* el QR necesita fondo claro para leerse */
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.boleto__nombre {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+.boleto__codigo {
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-display);
+  letter-spacing: 0.06em;
+  color: var(--color-primary);
+}
+
+.boleto__indicacion {
+  max-width: 34ch;
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+.boleto .btn { margin-top: var(--space-2); }
+
+.confirmation > .boleto .hint { text-align: center; }
+
+.boleto-tarjeta h2 { text-align: center; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .confirmation:not([hidden]) .boleto__qr,
+  .boleto-tarjeta:not([hidden]) .boleto__qr {
+    animation: fade-up var(--dur-slow) var(--ease-out) 1.2s backwards;
+  }
+}
+
+/* ---------- 2. Barra del moderador -------------------------------------- */
+.moderador__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.moderador__nombre { color: var(--color-text-muted); }
+.moderador__nombre strong { color: var(--color-text); }
+
+.moderador__puntos {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+}
+
+.moderador__puntos legend {
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-sm);
+  color: var(--color-text-subtle);
+}
+
+.puntos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.punto {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-h);
+  padding: 0 var(--space-4);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  background: var(--color-surface-deep);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease-standard), color var(--dur) var(--ease-standard);
+}
+
+.punto input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.punto:has(input:checked) {
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.punto:has(input:focus-visible) {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.moderador__puntos .hint { margin-top: var(--space-3); }
+
+.moderador__resumen {
+  margin-top: var(--space-3);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+/* ---------- 3. Lector ---------------------------------------------------- */
+.lector__visor {
+  position: relative;
+  overflow: hidden;
+  width: min(100%, 26rem);
+  aspect-ratio: 1;
+  margin-inline: auto;
+  background: var(--color-surface-deep);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.lector__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Marco de encuadre */
+.lector__marco {
+  position: absolute;
+  inset: 16%;
+  border: 3px solid color-mix(in srgb, var(--blanco) 85%, transparent);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 100vmax color-mix(in srgb, var(--negro) 35%, transparent);
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-standard);
+}
+
+.lector__visor.is-activo .lector__marco { opacity: 1; }
+
+.lector__aviso {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+  text-align: center;
+  color: var(--color-text-subtle);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lector__visor.is-activo .lector__marco {
+    animation: marco-respira 2.4s var(--ease-in-out) infinite;
+  }
+}
+
+@keyframes marco-respira {
+  50% { border-color: var(--color-primary); }
+}
+
+.lector .actions { margin-top: var(--space-5); padding-top: 0; border-top: 0; }
+
+.busqueda {
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+.busqueda__titulo {
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.busqueda .hint { margin-top: var(--space-3); }
+.busqueda__acciones { margin-top: var(--space-4); padding-top: 0; border-top: 0; }
+
+.resultado__boleto { margin-top: var(--space-4); }
+
+.busqueda__fila {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.busqueda__fila input { flex: 1; }
+.busqueda__fila .btn { flex: none; }
+
+/* ---------- 4. Resultado ------------------------------------------------- */
+.resultado {
+  --resultado-color: var(--color-success);
+  --resultado-fondo: var(--color-success-soft);
+  text-align: center;
+  border-top: 6px solid var(--resultado-color);
+}
+
+.resultado[data-tipo="invalido"] {
+  --resultado-color: var(--color-danger);
+  --resultado-fondo: var(--color-danger-soft);
+}
+
+.resultado[data-tipo="usado"] {
+  --resultado-color: var(--color-warning);
+  --resultado-fondo: var(--color-warning-soft);
+}
+
+.resultado[data-tipo="consulta"],
+.resultado[data-tipo="cargando"] {
+  --resultado-color: var(--color-info);
+  --resultado-fondo: var(--color-info-soft);
+}
+
+.resultado__icono {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto var(--space-3);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--resultado-color);
+  background: var(--resultado-fondo);
+  border: 3px solid var(--resultado-color);
+  border-radius: 50%;
+}
+
+.resultado[data-tipo="valido"] .resultado__icono::before,
+.resultado[data-tipo="registrado"] .resultado__icono::before { content: "✓"; }
+.resultado[data-tipo="invalido"] .resultado__icono::before { content: "✕"; }
+.resultado[data-tipo="usado"] .resultado__icono::before { content: "!"; }
+.resultado[data-tipo="consulta"] .resultado__icono::before { content: "?"; }
+.resultado[data-tipo="cargando"] .resultado__icono::before { content: "…"; }
+
+.resultado h2 {
+  font-size: var(--fs-xl);
+  color: var(--resultado-color);
+}
+
+.resultado__detalle {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.resultado__datos {
+  margin: var(--space-4) 0 0;
+  text-align: left;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.resultado__datos > div {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) 2fr;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.resultado__datos > div:first-child { border-top: 0; }
+.resultado__datos > div:first-child dd { font-size: var(--fs-lg); font-weight: 700; }
+
+.resultado__datos dt {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-subtle);
+  align-self: center;
+}
+
+.resultado__datos dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.resultado__punto {
+  width: fit-content;
+  margin: 0 auto var(--space-4);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  background: var(--color-surface-deep);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+}
+
+.resultado__punto strong { color: var(--color-primary); }
+
+.resultado__registro {
+  margin-top: var(--space-4);
+  text-align: left;
+}
+
+.resultado__subtitulo {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+}
+
+.resultado__ingresos {
+  display: grid;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+  font-size: var(--fs-sm);
+  color: var(--color-text-subtle);
+}
+
+.resultado__ingresos li { padding-left: 1.5rem; position: relative; }
+
+.resultado__ingresos li::before {
+  content: "○";
+  position: absolute;
+  left: 0.25rem;
+}
+
+.resultado__ingresos li.is-hecho { color: var(--color-text-muted); }
+.resultado__ingresos li.is-hecho::before { content: "●"; color: var(--color-success); }
+.resultado__ingresos li.is-actual { font-weight: 700; color: var(--color-text); }
+
+.resultado .actions {
+  flex-direction: column;
+  align-items: center;
+  margin-top: var(--space-5);
+}
+
+.resultado .actions .btn--cta { width: 100%; max-width: 22rem; }
+
+/* «Escanear otro boleto»: pequeño y discreto; la cámara está apagada mientras se lee el resultado */
+.resultado__siguiente {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.resultado__siguiente-icono {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .resultado.is-entrando { animation: fade-up var(--dur-slow) var(--ease-out); }
+  .resultado.is-entrando .resultado__icono { animation: resultado-icono 480ms var(--ease-spring) 80ms backwards; }
+}
+
+@keyframes resultado-icono {
+  from { opacity: 0; transform: scale(0.6); }
+}
+
+/* ---------- 5. Acceso de moderadores ------------------------------------ */
+.acceso > summary {
+  font-weight: 700;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.acceso > summary + * { margin-top: var(--space-3); }
+.acceso form { margin-top: var(--space-4); display: grid; gap: var(--space-4); }
+.acceso .actions { margin-top: 0; }
+
+/* ---------- 6. Impresión: solo el boleto -------------------------------- */
+@media print {
+  .boleto { border-color: var(--color-text); background: none; }
+  .boleto__qr { box-shadow: none; width: 6cm; }
+  .boleto__codigo { color: var(--color-text); }
+  .boletos-page form.card { display: none !important; }
+  .boleto-tarjeta { border: 0; }
+}
