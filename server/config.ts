@@ -81,6 +81,8 @@ export const config = {
   sesionMs: entero('SESION_HORAS', 12) * 3_600_000,
   /** Dirección pública del sitio (para el QR impreso). Opcional: aún no está definida. */
   urlPublica: urlPublica(),
+  /** Vista previa para el cliente: todas las páginas muestran que es una demostración. */
+  modoDemo: process.env.MODO_DEMO === '1',
 } as const;
 
 export type Config = typeof config;

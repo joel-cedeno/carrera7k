@@ -67,6 +67,7 @@ servidor.listen(config.port, config.host, () => {
   console.info(`Carrera 7K · http://${config.host}:${config.port}`);
   console.info(`  Base de datos: ${config.dbPath} (${db.contar()}/${config.totalCupos} inscritos)`);
   console.info(`  Ventana de inscripción: ${ventana}`);
+  if (config.modoDemo) console.info('  MODO DEMOSTRACIÓN: las páginas avisan que las inscripciones y boletos no son válidos.');
   console.info(`  Puntos de control: ${config.puntosControl.map((p) => p.nombre).join(' · ')}`);
   console.info(`  Boletos: firma Ed25519 ${firma.huella} · QR → ${config.urlPublica ?? 'dirección desde la que se abre el sitio (define URL_PUBLICA)'}`);
   const moderadores = db.moderadores().filter((m) => m.activo === 1);

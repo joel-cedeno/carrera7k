@@ -74,6 +74,8 @@ export interface Estado {
   fin: string | null;
   /** Hora del servidor (ms) para corregir el reloj del navegador. */
   ahora: number;
+  /** Sitio en modo demostración (MODO_DEMO=1): las páginas avisan que nada de lo que se registra es real. */
+  demo: boolean;
 }
 
 /** Respuesta de error del API. */

@@ -2,6 +2,13 @@ import type { ErrorApi, Estado, Inscripcion, InscripcionEntrada } from '../../..
 import { sincronizarReloj } from './reloj.ts';
 
 const SONDEO_MS = 15_000;
+/**
+ * Algunos proxies (Cloudflare, redes corporativas) retienen el canal en tiempo real sin cortarlo:
+ * no llega nada y el navegador tampoco da error. Si en este plazo no llegó ningún estado, se pasa
+ * a consultar periódicamente.
+ */
+const ESPERA_TIEMPO_REAL_MS = 8_000;
+const SONDEO_RESPALDO_MS = 10_000;
 
 export async function obtenerEstado(): Promise<Estado> {
   const res = await fetch('api/estado', { cache: 'no-store' });
@@ -60,15 +67,26 @@ export function suscribirEstado(alRecibir: (estado: Estado) => void, alPerderCon
     obtenerEstado().then(recibir, alPerderConexion);
   };
 
-  const iniciarSondeo = (): void => {
+  const iniciarSondeo = (intervalo = SONDEO_MS): void => {
     if (sondeo !== undefined) return;
     consultar();
-    sondeo = window.setInterval(consultar, SONDEO_MS);
+    sondeo = window.setInterval(consultar, intervalo);
   };
 
   if ('EventSource' in window) {
     fuente = new EventSource('api/estado/stream');
-    fuente.addEventListener('estado', (e) => recibir(JSON.parse((e as MessageEvent<string>).data) as Estado));
+    let recibio = false;
+    const vigilancia = window.setTimeout(() => {
+      if (recibio) return;
+      fuente?.close();
+      fuente = null;
+      iniciarSondeo(SONDEO_RESPALDO_MS);
+    }, ESPERA_TIEMPO_REAL_MS);
+    fuente.addEventListener('estado', (e) => {
+      recibio = true;
+      window.clearTimeout(vigilancia);
+      recibir(JSON.parse((e as MessageEvent<string>).data) as Estado);
+    });
     fuente.addEventListener('error', () => {
       alPerderConexion();
       // CLOSED: el servidor rechazó la conexión (p. ej. límite alcanzado); el navegador ya no reintentará.

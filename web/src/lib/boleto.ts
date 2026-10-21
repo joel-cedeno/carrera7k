@@ -1,5 +1,6 @@
 import { rutaVerificacion } from '../../../shared/boleto.ts';
 import { generarQr } from '../../../shared/qr.ts';
+import { esDemo } from './demo.ts';
 
 /** Datos que muestra el boleto. Sin cédula: el boleto se puede compartir o fotografiar. */
 export interface DatosBoleto {
@@ -188,6 +189,22 @@ export async function descargarBoleto(datos: DatosBoleto): Promise<void> {
   ctx.font = `400 30px ${sans}`;
   ctx.fillText(EVENTO.lugar, W / 2, 1470);
   ctx.fillText(EVENTO.indicacion, W / 2, 1530);
+
+  // Modo demostración: franja inferior imposible de recortar sin tapar el texto del evento.
+  if (esDemo()) {
+    ctx.fillStyle = '#fcc40d';
+    ctx.fillRect(0, H - 34, W, 34);
+    ctx.fillStyle = '#290055';
+    ctx.font = `700 24px ${sans}`;
+    ctx.fillText('BOLETO DE PRUEBA · NO VÁLIDO PARA LA CARRERA', W / 2, H - 10);
+    ctx.save();
+    ctx.translate(W / 2, 1020);
+    ctx.rotate(-Math.PI / 7);
+    ctx.fillStyle = 'rgba(206, 0, 255, 0.55)';
+    ctx.font = `900 150px ${display}`;
+    ctx.fillText('DEMO', 0, 50);
+    ctx.restore();
+  }
 
   const blob = await new Promise<Blob | null>((resolve) => lienzo.toBlob(resolve, 'image/png'));
   if (!blob) throw new Error('No se pudo crear la imagen');

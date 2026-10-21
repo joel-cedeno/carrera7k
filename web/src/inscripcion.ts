@@ -15,6 +15,7 @@ import {
 } from '../../shared/inscripcion.ts';
 import { enviarInscripcion, suscribirEstado } from './lib/api.ts';
 import { montarBoleto } from './lib/boleto.ts';
+import { aplicarModoDemo } from './lib/demo.ts';
 import { montarCupos } from './lib/cupos.ts';
 import { porId, pulsar, todos } from './lib/dom.ts';
 import { marcarJs } from './lib/movimiento.ts';
@@ -287,6 +288,7 @@ suscribirEstado(
   (estado) => {
     const primeraVez = ultimoEstado === null;
     ultimoEstado = estado;
+    aplicarModoDemo(estado);
     cupos.actualizar(estado);
     aplicarEstado(estado);
     // La fecha de referencia se ajusta con la hora del servidor al recibir el primer estado.

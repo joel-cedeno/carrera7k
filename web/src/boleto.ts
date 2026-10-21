@@ -1,10 +1,12 @@
 import { hoyISO } from '../../shared/inscripcion.ts';
 import { recuperarBoleto } from './lib/api-boletos.ts';
 import { montarBoleto } from './lib/boleto.ts';
+import { consultarModoDemo } from './lib/demo.ts';
 import { porId } from './lib/dom.ts';
 import { marcarJs } from './lib/movimiento.ts';
 
 marcarJs();
+consultarModoDemo();
 
 const form = document.querySelector<HTMLFormElement>('[data-recuperar]')!;
 const error = document.querySelector<HTMLElement>('[data-recuperar-error]')!;

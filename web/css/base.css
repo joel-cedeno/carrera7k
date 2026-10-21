@@ -589,6 +589,21 @@ img, svg { max-width: 100%; height: auto; }
   .cupos--card { border: 1px solid CanvasText; }
 }
 
+/* ---------- Modo demostración (MODO_DEMO=1) -------------------------------- */
+.aviso-demo {
+  position: relative;
+  z-index: 60;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--color-on-primary);
+  background: var(--amarillo);
+}
+
+.aviso-demo strong { font-weight: 700; }
+
 /* ---------- 9. Impresión ------------------------------------------------- */
 /* ---------- 2. Barra superior -------------------------------------------- */
 .topbar {

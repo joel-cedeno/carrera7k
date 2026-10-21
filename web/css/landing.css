@@ -988,6 +988,64 @@
 
 .notice strong { color: var(--color-warning); }
 
+/* Tarjeta de contenido (columnas de igual altura dentro de un grid) */
+.tarjeta {
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.tarjeta > * + * { margin-top: var(--space-4); }
+.tarjeta > h3 + * { margin-top: var(--space-3); }
+.tarjeta .prose { font-size: var(--fs-md); }
+
+/* «¿Qué es la Carrera?»: texto | cita destacada, a la misma altura */
+.carrera {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6);
+}
+
+.carrera > .pullquote { margin: 0; }
+
+@media (min-width: 64rem) {
+  .carrera {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    column-gap: var(--space-7);
+    align-items: center;
+  }
+}
+
+/* Secciones de poco contenido: una sola columna centrada sobre el eje de la página
+   (como la convocatoria y la banda final), sin mitades vacías. */
+.section--centrada .container { text-align: center; }
+
+.section--centrada .prose,
+.section--centrada .checklist { margin-inline: auto; }
+
+.section--centrada .tags { justify-content: center; margin-inline: auto; }
+
+.section--centrada .notice {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  text-align: left;
+}
+
+.kit > * + * { margin-top: var(--space-4); }
+.kit > .notice { margin-top: var(--space-5); }
+
+.participa__quien > h3 + * { margin-top: var(--space-3); }
+
+/* La tarjeta de inscripciones, centrada y con su contenido alineado a la izquierda */
+.section--centrada .callout {
+  max-width: 40rem;
+  margin-inline: auto;
+  text-align: left;
+}
+
 /* ---------- 6. Cronograma ------------------------------------------------ */
 .timeline {
   --time-w: 4.75rem;     /* «07h00» del hito clave (--fs-lg) mide ≈ 72 px: deja holgura */
@@ -1142,8 +1200,26 @@
   margin-top: var(--space-5);
 }
 
-.jornada__detalles { margin-top: var(--space-7); }
-.jornada__detalles > div > * + h3 { margin-top: var(--space-6); }
+/* Antes de la salida · El recorrido · Al llegar a la meta: tarjetas de igual altura */
+.jornada__detalles {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  margin-top: var(--space-7);
+}
+
+/* Escritorio: «Antes de la salida» a todo el ancho (sus 4 indicaciones en 2 columnas) y
+   debajo «El recorrido» | «Al llegar a la meta», de contenido parecido, a la misma altura. */
+@media (min-width: 48rem) {
+  .jornada__detalles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .jornada__detalles > .tarjeta:first-child { grid-column: 1 / -1; }
+
+  .jornada__detalles > .tarjeta:first-child .checklist {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-6);
+    max-width: none;
+  }
+}
 
 @media (min-width: 64rem) {
   .jornada {
@@ -1177,6 +1253,14 @@
 .mapa .leaflet-container {
   font-family: var(--font-sans);
   background: var(--color-surface-deep);
+}
+
+/* Leaflet usa z-index internos de hasta 1000 (capas y controles). Un contexto de apilamiento
+   propio los encierra: el mapa entero queda por debajo de la barra superior (z-index 50). */
+.mapa__lienzo {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
 }
 
 /* Mapa base claro de OpenStreetMap llevado al morado de la marca */

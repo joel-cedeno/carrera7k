@@ -2,6 +2,7 @@ import { suscribirEstado } from './lib/api.ts';
 import { montarBotonesInscripcion } from './lib/cta.ts';
 import { montarCuentasRegresivas } from './lib/cuenta-regresiva.ts';
 import { montarCupos } from './lib/cupos.ts';
+import { aplicarModoDemo } from './lib/demo.ts';
 import { montarMapa } from './lib/mapa.ts';
 import {
   marcarJs,
@@ -21,6 +22,7 @@ suscribirEstado(
   (estado) => {
     cupos.actualizar(estado);
     botones.actualizar(estado.estado);
+    aplicarModoDemo(estado);
   },
   () => cupos.desconectado(),
 );

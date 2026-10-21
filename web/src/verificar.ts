@@ -18,11 +18,13 @@ import {
   verificarBoleto,
 } from './lib/api-boletos.ts';
 import { montarBoleto, type DatosBoleto } from './lib/boleto.ts';
+import { consultarModoDemo } from './lib/demo.ts';
 import { formatearNumero, movimientoReducido, porId } from './lib/dom.ts';
 import { MENSAJES_CAMARA, crearEscaner, type ErrorCamara } from './lib/escaner.ts';
 import { marcarJs } from './lib/movimiento.ts';
 
 marcarJs();
+consultarModoDemo();
 
 const $ = <T extends Element = HTMLElement>(selector: string): T => {
   const el = document.querySelector<T>(selector);

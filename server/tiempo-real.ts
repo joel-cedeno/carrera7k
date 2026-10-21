@@ -18,6 +18,7 @@ export function calcularEstado(inscritos: number, config: Config, ahora = new Da
     inicio: inicio?.toISOString() ?? null,
     fin: fin?.toISOString() ?? null,
     ahora: ahora.getTime(),
+    demo: config.modoDemo,
   };
 }
 
